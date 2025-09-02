@@ -1,5 +1,18 @@
 import os as sistema
 import textwrap as textwrap
+import os
+import sys
+# Añadir la ruta raíz para poder importar desde data y src
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from data.stories import accionCapituloInicial
+from src.combate import Personaje
+
+
+inventario = {
+    'pocion': 1,
+    'espada': 1
+}
 
 def anchoLargoTerminal():
     lineas = sistema.get_terminal_size().lines
@@ -30,11 +43,16 @@ def imprimirBienvenida():
             complemento.rjust((columnas//6)) + '\t' 
         )
     print("\n")
-    mensajeDescripcion = "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.\n Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n En este viaje, cada hilo que unes te conecta a un destino único.\n El futuro no está escrito; tú eres el tejedor de tu propia historia."
+    mensajeDescripcion = (
+        "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.\n"
+        "Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n"
+        "En este viaje, cada hilo que unes te conecta a un destino único.\n"
+        "El futuro no está escrito; tú eres el tejedor de tu propia historia."
+    )
     mensajeDescEnvuelto = textwrap.fill(mensajeDescripcion,width=(columnas//2))
     lineasMsjDesc = mensajeDescEnvuelto.splitlines()
 
-    for linea in lineasMsjDesc():
+    for linea in lineasMsjDesc:
         print(linea)
         """print(
                 complemento.rjust((columnas//6)) + '\t' +
@@ -49,4 +67,7 @@ def main ():
     imprimirCabecera()
     imprimirBienvenida()
 
-main()
+    accionCapituloInicial.start(inventario)
+
+if __name__ == '__main__':
+    main()
