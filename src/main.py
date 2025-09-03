@@ -3,47 +3,57 @@ import textwrap as textwrap
 
 def anchoLargoTerminal():
     lineas = sistema.get_terminal_size().lines
-    columnas = sistema.get_terminal_size().columns
-    return lineas,columnas
+    columnas = sistema.get_terminal_size().columns if (sistema.get_terminal_size().columns >= 100) else 80
+    bordeIzquierdo = (columnas//3)
+    centro = (columnas//3) + (columnas//3)
+    bordeDerecho = (columnas//3)
 
-def imprimirSeparador(a,f):
-    for x in range(f):
-        for n in range(a):
-            print("*",end=" ")
-        print("\n")
+    return lineas,columnas,bordeIzquierdo,centro,bordeDerecho
+
+def imprimirSeparador(li,col,bz,c,bd):
+    bordeIzquierdo = (col//3)
+    centro = (col//4)
+    bordeDerecho = (col//3)
+    
+
+    listaAsteriscos = ['*' for n in range(col)]
+    # parrafo = textwrap.wrap(listaAsteriscos,centro)
+    """print(parrafo)"""
+    """print(listaAsteriscos.ljust(bordeIzquierdo))"""
+    
+ 
 
 def imprimirCabecera():
-    lineas,columnas = anchoLargoTerminal()
-
-    if columnas > 100 :
-        columnas = 80    
-
-    imprimirSeparador(columnas,2)
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()  
+    imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
 
 def imprimirBienvenida():
-    lineas,columnas = anchoLargoTerminal()
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
+
     complemento = "*"
     mensajeBienvenida = "¡Bienvenido a Destiny Weaver!"
     print(
-            complemento.rjust((columnas//6)) + '\t' +
-            mensajeBienvenida.rjust((columnas//5)) + '\t' +
-            complemento.rjust((columnas//6)) + '\t' 
+            complemento.ljust(bordeIzquierdo) + 
+            mensajeBienvenida.center(0) + 
+            complemento.rjust(bordeDerecho) 
         )
     print("\n")
-    mensajeDescripcion = "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.\n Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n En este viaje, cada hilo que unes te conecta a un destino único.\n El futuro no está escrito; tú eres el tejedor de tu propia historia."
-    mensajeDescEnvuelto = textwrap.fill(mensajeDescripcion,width=(columnas//2))
-    lineasMsjDesc = mensajeDescEnvuelto.splitlines()
+    
+    mensajeDescripcion = "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones. Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n En este viaje, cada hilo que unes te conecta a un destino único. El futuro no está escrito; tú eres el tejedor de tu propia historia."
+    
+    parrafo = textwrap.wrap(mensajeDescripcion,(columnas//2))
+    complemento = " "
+    for linea in parrafo:
 
-    for linea in lineasMsjDesc():
-        print(linea)
-        """print(
-                complemento.rjust((columnas//6)) + '\t' +
-                linea+
-                complemento.rjust((columnas//6)) + '\t' 
-            ,end=" ")"""
-        
-        
+        print(
+                complemento.ljust((bordeIzquierdo - centro))+
+                linea.center(centro)+
+                complemento.rjust((bordeDerecho ))
+             )
+    
+    
 
+     
 
 def main ():
     imprimirCabecera()
