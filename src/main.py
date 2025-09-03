@@ -1,9 +1,8 @@
 import os as sistema
 import textwrap as textwrap
-import os
 import sys
 # Añadir la ruta raíz para poder importar desde data y src
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(sistema.path.abspath(sistema.path.join(sistema.path.dirname(__file__), '..')))
 
 from data.stories import accionCapituloInicial
 from src.combate import Personaje
