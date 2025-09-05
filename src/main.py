@@ -17,9 +17,6 @@ def imprimirSeparador(li,col,bz,c,bd):
     
 
     listaAsteriscos = ['*' for n in range(col)]
-    # parrafo = textwrap.wrap(listaAsteriscos,centro)
-    """print(parrafo)"""
-    """print(listaAsteriscos.ljust(bordeIzquierdo))"""
     
  
 
@@ -44,11 +41,10 @@ def imprimirBienvenida():
     parrafo = textwrap.wrap(mensajeDescripcion,(columnas//2))
     complemento = " "
     for linea in parrafo:
-
         print(
-                complemento.ljust((bordeIzquierdo - centro))+
-                linea.center(centro)+
-                complemento.rjust((bordeDerecho ))
+                complemento.ljust(bordeIzquierdo - (centro//3) )+
+                linea.center(0)+
+                complemento.rjust(bordeDerecho - (centro//3))
              )
     
     
