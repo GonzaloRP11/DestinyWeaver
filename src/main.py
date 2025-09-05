@@ -1,7 +1,11 @@
 import os as sistema
 import textwrap as textwrap
+from colorama import fore,Style
+
+
 
 def anchoLargoTerminal():
+    """ Configurar terminal"""
     lineas = sistema.get_terminal_size().lines
     if sistema.get_terminal_size().columns < 80:
         print("Su terminal es demasiado pequeña para jugar.")
@@ -16,20 +20,20 @@ def anchoLargoTerminal():
     return lineas,columnas,bordeIzquierdo,centro,bordeDerecho
 
 def imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
-
+    """ Impresión de separador"""
     listaAsteriscos = '*' * centro
     for a in range(2):
         print(listaAsteriscos.center(centro + bordeIzquierdo))
    
     
  
-#Impresión de cabecera principal 
 def imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+    """Imprimir cabecera al comienzo del juego"""
     imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
     imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
 
-# Impresión del título de bienvenida al jugador
 def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
+    """Imprimir mensaje de bienvenida e introducción"""
     complemento = " "
     mensajeBienvenida = "¡Bienvenido a Destiny Weaver!"
     print(
@@ -47,10 +51,16 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
                " ".rjust(bordeDerecho)
             )
 
+def obtenerNombreJugador():
+    nombre = ""
+    while len(nombre) < 3:
+        nombre = input("Por favor, ingrese un nombre de jugador")
+    
 
 #Comienzo del programa
 def main ():
     lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
     imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
+    obtenerNombreJugador()
 
 main()
