@@ -4,4 +4,5 @@ historial = [
             "opciones":[],
             "respuesta_jugador":""
     }
+    
 ]

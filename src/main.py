@@ -1,6 +1,5 @@
 import os as sistema
 import textwrap as textwrap
-from colorama import fore,Style
 
 
 
