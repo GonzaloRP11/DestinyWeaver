@@ -83,8 +83,8 @@ def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJu
     for diccionario in hilos.hilos:
         print(
               " " * (bordeIzquierdo//2) +
-              f"{diccionario['Hilo']}\t" +
-              " " * bordeDerecho +
+              f"{diccionario['Hilo']}" +
+              " " * (len({diccionario['Hilo']}) + bordeDerecho if len({diccionario['Hilo']}) > bordeDerecho else  len({diccionario['Hilo']}) + bordeDerecho) +
               f"opción:{diccionario['opcion']}")
 
             

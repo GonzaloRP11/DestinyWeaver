@@ -1,7 +1,7 @@
 
 hilos = [
         {
-            "Hilo": "El Hilo de la Comedia:",
+            "Hilo": "El Hilo de la Comedia",
             "opcion": 1,
             "historia":"humorCapituloInicial"
         },
