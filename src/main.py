@@ -2,6 +2,8 @@ import os as sistema
 import textwrap as textwrap
 import pyfiglet as estiloFontFig
 import art as estiloFontArt
+from importlib.machinery import SourceFileLoader
+
 
 
 
@@ -21,6 +23,7 @@ def anchoLargoTerminal():
     return lineas,columnas,bordeIzquierdo,centro,bordeDerecho
 
 def borrarLineas(cantLineas):
+    """ Borrar lineas de la consola"""
     for _ in range(cantLineas):
         print("\033[F\033[K", end='')
 
@@ -38,6 +41,15 @@ def imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
     imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
     imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
 
+def imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo):
+    for oracion in parrafo.splitlines():
+        print( 
+                
+                estiloFontArt.text2art(oracion,font="tiny2").center(bordeIzquierdo+centro+bordeDerecho)
+            )
+    print("\n")
+
+
 def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
     """Imprimir mensaje de bienvenida e introducción"""
     complemento = " "
@@ -51,24 +63,37 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
     
     parrafo = textwrap.fill(mensajeDescripcion,bordeIzquierdo+centro)
 
-    for oracion in parrafo.splitlines():
-        print( 
-                
-                estiloFontArt.text2art(oracion,font="tiny2").center(bordeIzquierdo+centro+bordeDerecho)
-            )
-    print("\n")
-
+    imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo)
+    
 def obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+    """ Obtiene nombre del jugador """
     nombre = ""
     while len(nombre) < 3:
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
     borrarLineas(3)
-    return nombre
 
-#Comienzo del programa
+def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador):
+    mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
+    mensajeHilos1 = textwrap.fill(mensajeHilos1,bordeIzquierdo+centro)
+    imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,mensajeHilos1)
+    
+    rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
+    hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module()
+
+    for diccionario in hilos.hilos:
+        print(
+              " " * (bordeIzquierdo//2) +
+              f"{diccionario['Hilo']}\t" +
+              " " * bordeDerecho +
+              f"opción:{diccionario['opcion']}")
+
+            
+    
 def main ():
+    """Comeinzo de programa"""
     lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
     imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
+    nombreJugador = obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
+    eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador)
 
 main()
