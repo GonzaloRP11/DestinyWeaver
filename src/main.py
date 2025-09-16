@@ -2,10 +2,12 @@ import os as sistema
 import textwrap as textwrap
 import pyfiglet as estiloFontFig
 import art as estiloFontArt
+import sys
+# Añadir la ruta raíz para poder importar desde data y src
+sys.path.append(sistema.path.abspath(sistema.path.join(sistema.path.dirname(__file__), '..')))
+
 from importlib.machinery import SourceFileLoader
-
-
-
+from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapituloInicial, terrorCapituloInicial
 
 def anchoLargoTerminal():
     """ Configurar terminal"""
@@ -59,8 +61,13 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
         )
     print("\n")
     
-    mensajeDescripcion = "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones. Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n En este viaje, cada hilo que unes te conecta a un destino único. El futuro no está escrito; tú eres el tejedor de tu propia historia."
-    
+    mensajeDescripcion = (
+        "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.\n"
+        "Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n"
+        "En este viaje, cada hilo que unes te conecta a un destino único.\n"
+        "El futuro no está escrito; tú eres el tejedor de tu propia historia."
+    )
+
     parrafo = textwrap.fill(mensajeDescripcion,bordeIzquierdo+centro)
 
     imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo)
@@ -78,7 +85,7 @@ def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJu
     imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,mensajeHilos1)
     
     rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
-    hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module()
+    hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
 
     for diccionario in hilos.hilos:
         print(
@@ -86,6 +93,21 @@ def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJu
               f"{diccionario['Hilo']}" +
               " " * (len({diccionario['Hilo']}) + bordeDerecho if len({diccionario['Hilo']}) > bordeDerecho else  len({diccionario['Hilo']}) + bordeDerecho) +
               f"opción:{diccionario['opcion']}")
+    ejecutar_accion_por_opcion()
+
+def ejecutar_accion_por_opcion():  
+    opcion_elegida = int(input("Selecciona una opción: "))
+    match opcion_elegida:
+        case 1:
+            humorCapituloInicial.start()
+        case 2:
+            accionCapituloInicial.start()
+        case 3:
+            dramaCapituloInicial.start()
+        case 4:
+            terrorCapituloInicial.start()
+        case _:
+            print("Opción no válida.")
 
             
     
