@@ -7,7 +7,7 @@ historial = [
     }
 ]
 
-def start_drama():
+def start():
     while True:
         print("\nLlegas a una plaza silenciosa, donde una tensión silenciosa llena el aire.")
         print("Dos personas están en medio de un conflicto intenso, gritando y gesticulando con pasión.")
