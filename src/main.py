@@ -74,10 +74,26 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
     
 def obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
     """ Obtiene nombre del jugador """
+
+    letras_validas = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     nombre = ""
+
     while len(nombre) < 3:
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
+        
+        # Verificar caracteres válidos usando un bucle for
+        valido = True
+        for c in nombre:
+            if c not in letras_validas:
+                valido = False
+                break  # si encuentra un caracter que no esta definido rompe el bucle
+
+        if not valido:
+            print("Nombre inválido. Solo se permiten letras y números.".center(columnas))
+            nombre = "" 
+
     borrarLineas(3)
+    return nombre
 
 def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador):
     mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
@@ -95,28 +111,19 @@ def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJu
               f"opción:{diccionario['opcion']}")
     ejecutar_accion_por_opcion()
 
-def ejecutar_accion_por_opcion():
-    while True:
-        opcion_input = input("Selecciona una opción: ")
-        if opcion_input == "" or not opcion_input.isdigit():
-            print("Opción no válida. Por favor, ingresa un número valido.")
-            continue
-        opcion_elegida = int(opcion_input)
-        match opcion_elegida:
-            case 1:
-                humorCapituloInicial.start()
-                break
-            case 2:
-                accionCapituloInicial.start()
-                break
-            case 3:
-                dramaCapituloInicial.start()
-                break
-            case 4:
-                terrorCapituloInicial.start()
-                break
-            case _:
-                print("Opción no válida. Por favor, intenta nuevamente.")
+def ejecutar_accion_por_opcion():  
+    opcion_elegida = int(input("Selecciona una opción: "))
+    match opcion_elegida:
+        case 1:
+            humorCapituloInicial.start()
+        case 2:
+            accionCapituloInicial.start()
+        case 3:
+            dramaCapituloInicial.start()
+        case 4:
+            terrorCapituloInicial.start()
+        case _:
+            print("Opción no válida.")
 
             
     
@@ -127,4 +134,5 @@ def main ():
     nombreJugador = obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
     eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador)
 
-main()
+if __name__ == '__main__':
+    main()
