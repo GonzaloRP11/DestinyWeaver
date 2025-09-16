@@ -118,5 +118,4 @@ def main ():
     nombreJugador = obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
     eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador)
 
-if __name__ == '__main__':
-    main()
+main()
