@@ -14,7 +14,7 @@ inventario = {
     'amuletos_mago': 1     # Un objeto mágico que puede protegerte o ayudarte a resolver acertijos relacionados con espíritus
 }
 
-def start_terror():
+def start():
     while True:
         print("\nCaminas por un bosque oscuro, donde la luna apenas ilumina el sendero.")
         print("El aire está pesado, y escuchas susurros que parecen provenir de las sombras.")

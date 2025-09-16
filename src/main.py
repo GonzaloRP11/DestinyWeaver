@@ -95,19 +95,28 @@ def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJu
               f"opción:{diccionario['opcion']}")
     ejecutar_accion_por_opcion()
 
-def ejecutar_accion_por_opcion():  
-    opcion_elegida = int(input("Selecciona una opción: "))
-    match opcion_elegida:
-        case 1:
-            humorCapituloInicial.start()
-        case 2:
-            accionCapituloInicial.start()
-        case 3:
-            dramaCapituloInicial.start()
-        case 4:
-            terrorCapituloInicial.start()
-        case _:
-            print("Opción no válida.")
+def ejecutar_accion_por_opcion():
+    while True:
+        opcion_input = input("Selecciona una opción: ")
+        if opcion_input == "" or not opcion_input.isdigit():
+            print("Opción no válida. Por favor, ingresa un número valido.")
+            continue
+        opcion_elegida = int(opcion_input)
+        match opcion_elegida:
+            case 1:
+                humorCapituloInicial.start()
+                break
+            case 2:
+                accionCapituloInicial.start()
+                break
+            case 3:
+                dramaCapituloInicial.start()
+                break
+            case 4:
+                terrorCapituloInicial.start()
+                break
+            case _:
+                print("Opción no válida. Por favor, intenta nuevamente.")
 
             
     
