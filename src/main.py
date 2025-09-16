@@ -9,11 +9,6 @@ sys.path.append(sistema.path.abspath(sistema.path.join(sistema.path.dirname(__fi
 from importlib.machinery import SourceFileLoader
 from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapituloInicial, terrorCapituloInicial
 
-inventario = {
-    'pocion': 1,
-    'espada': 1
-}
-
 def anchoLargoTerminal():
     """ Configurar terminal"""
     lineas = sistema.get_terminal_size().lines
@@ -106,7 +101,7 @@ def ejecutar_accion_por_opcion():
         case 1:
             humorCapituloInicial.start()
         case 2:
-            accionCapituloInicial.start(inventario)
+            accionCapituloInicial.start()
         case 3:
             dramaCapituloInicial.start()
         case 4:
