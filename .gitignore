@@ -1,2 +1,4 @@
 TP_DestinyWeaverEnviroment/
 .TP_DestinyWeaverEnviroment/
+*.pyc
+.data/hilos/__pycache__
