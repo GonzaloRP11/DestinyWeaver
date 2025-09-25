@@ -15,7 +15,8 @@ def anchoLargoTerminal():
         print("Su terminal es demasiado pequeña para jugar.")
         return
     else:
-        columnas = sistema.get_terminal_size().columns if (sistema.get_terminal_size().columns >= 100) else 80
+        #columnas = sistema.get_terminal_size().columns if (sistema.get_terminal_size().columns >= 100) else 80
+        columnas = (lambda columna: 80 if columna>=100 else 80) (sistema.get_terminal_size().columns)
 
     bordeIzquierdo = (columnas//4)
     centro = bordeIzquierdo * 2
@@ -37,8 +38,9 @@ def imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
    
     
  
-def imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+def imprimirCabecera():
     """Imprimir cabecera al comienzo del juego"""
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
     imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
     imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
 
@@ -71,9 +73,9 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
 
     imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo)
     
-def obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+def obtenerNombreJugador():
     """ Obtiene nombre del jugador """
-
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
     letras_validas = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     nombre = ""
 
@@ -94,7 +96,8 @@ def obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
     borrarLineas(3)
     return nombre
 
-def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador):
+def eleccionHistoria(nombreJugador):
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
     mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
     mensajeHilos1 = textwrap.fill(mensajeHilos1,bordeIzquierdo+centro)
     imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,mensajeHilos1)
@@ -137,9 +140,8 @@ def ejecutar_accion_por_opcion():
     
 def main ():
     """Comeinzo de programa"""
-    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
-    imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    nombreJugador = obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador)
+    imprimirCabecera()
+    nombreJugador = obtenerNombreJugador()
+    eleccionHistoria(nombreJugador)
 
 main()
