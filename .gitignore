@@ -1,4 +1,10 @@
 TP_DestinyWeaverEnviroment/
 .TP_DestinyWeaverEnviroment/
+entornoVirtual/
+.entornoVirtual/
 *.pyc
 __pycache__
+.DS_store
+.vscode/
+.vscode/
+
