@@ -3,3 +3,11 @@ TP_DestinyWeaverEnviroment/
 *.pyc
 .data/hilos/__pycache__
 notas.txt
+entornoVirtual/
+.entornoVirtual/
+*.pyc
+__pycache__
+.DS_store
+.vscode/
+.vscode/
+

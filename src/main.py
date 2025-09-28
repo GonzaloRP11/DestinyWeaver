@@ -1,28 +1,43 @@
 import os as sistema
 import textwrap as textwrap
-import pyfiglet as estiloFontFig
 import art as estiloFontArt
 import sys
+import re 
 # Añadir la ruta raíz para poder importar desde data y src
 sys.path.append(sistema.path.abspath(sistema.path.join(sistema.path.dirname(__file__), '..')))
 
 from importlib.machinery import SourceFileLoader
 from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapituloInicial, terrorCapituloInicial
 
-def anchoLargoTerminal():
+def anchoLargoTerminal(solicita):
     """ Configurar terminal"""
     lineas = sistema.get_terminal_size().lines
     if sistema.get_terminal_size().columns < 80:
         print("Su terminal es demasiado pequeña para jugar.")
         return
     else:
-        columnas = sistema.get_terminal_size().columns if (sistema.get_terminal_size().columns >= 100) else 80
+        columnas = (lambda columna: 80 if columna>=100 else 80) (sistema.get_terminal_size().columns)
 
     bordeIzquierdo = (columnas//4)
     centro = bordeIzquierdo * 2
     bordeDerecho = bordeIzquierdo
 
-    return lineas,columnas,bordeIzquierdo,centro,bordeDerecho
+    match solicita:
+        case 'bordeizquierdo':
+            return bordeIzquierdo
+        case 'centro':
+            return centro
+        case 'bordederecho':
+            return bordeDerecho
+        case 'lineas':
+            return lineas
+        case 'columnas':
+            return columnas
+        case 'bordescentro':
+            return bordeIzquierdo,centro,bordeDerecho
+        case '*':
+            return lineas,columnas,bordeIzquierdo,centro,bordeDerecho
+    
 
 def borrarLineas(cantLineas):
     """ Borrar lineas de la consola"""
@@ -30,20 +45,23 @@ def borrarLineas(cantLineas):
         print("\033[F\033[K", end='')
 
 
-def imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+def imprimirSeparador():
     """ Impresión de separador"""
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('*')
     listaAsteriscos = '*' * (columnas - bordeIzquierdo)
     for a in range(2):
         print(listaAsteriscos.center(centro + bordeIzquierdo + bordeDerecho))
    
     
  
-def imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+def imprimirCabecera():
     """Imprimir cabecera al comienzo del juego"""
-    imprimirSeparador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
+    imprimirSeparador()
+    imprimirBienvenida()
 
-def imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo):
+def imprimirParrafo(parrafo):
+    bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('bordescentro')
+
     for oracion in parrafo.splitlines():
         print( 
                 
@@ -52,8 +70,9 @@ def imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo):
     print("\n")
 
 
-def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
+def imprimirBienvenida():
     """Imprimir mensaje de bienvenida e introducción"""
+    bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('bordescentro')
     complemento = " "
     mensajeBienvenida = "¡Bienvenido a Destiny Weaver!"
     print(
@@ -70,29 +89,38 @@ def imprimirBienvenida(lineas,columnas,bordeIzquierdo,centro,bordeDerecho ):
 
     parrafo = textwrap.fill(mensajeDescripcion,bordeIzquierdo+centro)
 
-    imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,parrafo)
+    imprimirParrafo(parrafo)
     
-def obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho):
+def obtenerNombreJugador():
     """ Obtiene nombre del jugador """
-    nombre = ""
-    while len(nombre) < 3:
+    columnas = anchoLargoTerminal('columnas')
+    patron = '^[a-zA-Z]{3,15}$'
+    nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
+    lineaBorrar = 2
+    while re.search(patron,nombre) == None:
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
-    borrarLineas(3)
+        lineaBorrar += 2
+    borrarLineas(lineaBorrar)
+    return nombre
 
-def eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador):
+def eleccionHistoria(nombreJugador):
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('*')
     mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
     mensajeHilos1 = textwrap.fill(mensajeHilos1,bordeIzquierdo+centro)
-    imprimirParrafo(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,mensajeHilos1)
+    imprimirParrafo(mensajeHilos1)
     
     rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
     hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
-
+    max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
+    
     for diccionario in hilos.hilos:
+        espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordeIzquierdo)
         print(
               " " * (bordeIzquierdo//2) +
               f"{diccionario['Hilo']}" +
-              " " * (len({diccionario['Hilo']}) + bordeDerecho if len({diccionario['Hilo']}) > bordeDerecho else  len({diccionario['Hilo']}) + bordeDerecho) +
+                espacios_relleno +
               f"opción:{diccionario['opcion']}")
+        
     ejecutar_accion_por_opcion()
 
 def ejecutar_accion_por_opcion():
@@ -121,10 +149,9 @@ def ejecutar_accion_por_opcion():
             
     
 def main ():
-    """Comeinzo de programa"""
-    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal()
-    imprimirCabecera(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    nombreJugador = obtenerNombreJugador(lineas,columnas,bordeIzquierdo,centro,bordeDerecho)
-    eleccionHistoria(lineas,columnas,bordeIzquierdo,centro,bordeDerecho,nombreJugador)
+    """Comienzo de programa"""
+    imprimirCabecera()
+    nombreJugador = obtenerNombreJugador()
+    eleccionHistoria(nombreJugador)
 
 main()
