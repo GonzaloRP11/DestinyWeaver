@@ -121,9 +121,22 @@ def eleccionHistoria(nombreJugador):
                 espacios_relleno +
               f"opción:{diccionario['opcion']}")
         
-    ejecutar_accion_por_opcion()
+    ejecutar_accion_por_opcion(nombreJugador)
 
-def ejecutar_accion_por_opcion():
+def ejecutarHiloHumor(nombreJugador):
+    print("Hola")
+
+def ejecutarHiloAccion(nombreJugador):
+    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('*')
+    print((textwrap.fill(accionCapituloInicial.historial[0]["contenido"],bordeIzquierdo+centro)).center(columnas))
+
+def ejecutarHiloTerror(nombreJugador):
+    print("Hola")
+
+def ejecutarHiloDrama(nombreJugador):
+    print("Hola")
+
+def ejecutar_accion_por_opcion(nombreJugador):
     while True:
         opcion_input = input("Selecciona una opción: ")
         if opcion_input == "" or not opcion_input.isdigit():
@@ -132,16 +145,20 @@ def ejecutar_accion_por_opcion():
         opcion_elegida = int(opcion_input)
         match opcion_elegida:
             case 1:
-                humorCapituloInicial.start()
+                ejecutarHiloHumor(nombreJugador)
+                #humorCapituloInicial.start()
                 break
             case 2:
-                accionCapituloInicial.start()
+                ejecutarHiloAccion(nombreJugador)
+                #accionCapituloInicial.start()
                 break
             case 3:
-                dramaCapituloInicial.start()
+                ejecutarHiloDrama(nombreJugador)
+                #dramaCapituloInicial.start()
                 break
             case 4:
-                terrorCapituloInicial.start()
+                ejecutarHiloTerror(nombreJugador)
+                #terrorCapituloInicial.start()
                 break
             case _:
                 print("Opción no válida. Por favor, intenta nuevamente.")

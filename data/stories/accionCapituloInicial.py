@@ -3,8 +3,26 @@ from src.combate import Personaje
 historial = [
     {
             "nombre_jugador":"",
-            "contenido":"",
-            "opciones":[],
+            "contenido":""" 
+                            La Tensión del Hilo Rojo
+
+                            Al posar tu mano sobre el **Hilo de la Furia**, una oleada de calor ardiente recorre tu brazo y tu pecho. El hilo, de un rojo carmesí intenso, vibra con la promesa de una venganza postergada, un ajuste de cuentas que ha esperado demasiado.
+
+                            La voz etérea se torna un graznido siseante en tu mente: *Ah, la vieja danza de la sangre. Un tejido fuerte, pero fácil de deshilachar. Tu furia te guiará, tejedor, pero ¿hacia dónde
+
+                            El hilo se tensa, tirando de ti con una fuerza ineludible. De la penumbra surge una visión: No es un recuerdo, sino una **posibilidad** candente.
+
+                            Ves ante ti dos caminos forjados por el mismo dolor, pero dirigidos por intenciones distintas:
+
+                            1.  El Camino de la Devastación:** Seguir el impulso ciego de la ira, buscar el enfrentamiento directo con aquello o aquel que te causó el daño, sin medir las consecuencias. Es un camino de fuego y ceniza, donde podrías **consumirte** antes de alcanzar tu objetivo.
+                            2.  El Camino de la Estrategia:** Canalizar la furia en una determinación fría, planear la venganza con precisión y paciencia, utilizando la rabia como combustible para la astucia. Es un camino lento, donde el enemigo podría **ver tu golpe venir si dudas.
+
+                            ¿Qué harás con la fuerza del Hilo de la Furia
+
+                            A) Seguir el impulso ciego (Devastación).
+
+                            B) Planear con frialdad (Estrategia).""",
+            "opciones":['A','B'],
             "respuesta_jugador":""
     }
 ]
