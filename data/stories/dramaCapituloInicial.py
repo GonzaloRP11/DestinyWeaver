@@ -24,6 +24,7 @@ historial = [
     }
 ]
 
+'''
 def start():
     while True:
         print("\nLlegas a una plaza silenciosa, donde una tensión silenciosa llena el aire.")
@@ -72,3 +73,4 @@ def start():
         if volver != 'sí' and volver != 'si':
             print("¡Gracias por vivir esta historia de drama! ¡Hasta la próxima!")
             break
+'''

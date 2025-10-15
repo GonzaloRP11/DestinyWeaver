@@ -25,6 +25,7 @@ historial = [
     }
 ]
 
+'''
 inventario = {
     'pocion': 1,           # Pociones para recuperar vida si decides enfrentarte a algo o escapar
     'amuleta': 0,          # Objeto que puedes usar para protección contra fantasmas o entidades oscuras
@@ -101,3 +102,4 @@ def start():
         if volver != 'sí' and volver != 'si':
             print("¡Gracias por explorar este mundo oscuro! ¡Hasta luego!")
             break
+'''

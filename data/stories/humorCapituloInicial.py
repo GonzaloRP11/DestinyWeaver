@@ -26,6 +26,7 @@ historial = [
     }
 ]
 
+'''
 def start():
     while True:
         print("\n¡Bienvenido al festival más colorido y divertido de toda la ciudad!\n")
@@ -77,3 +78,4 @@ def start():
         if volver != 'sí' and volver != 'si':
             print("¡Gracias por compartir risas en el festival! ¡Hasta luego!")
             break
+'''
