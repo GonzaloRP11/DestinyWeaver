@@ -11,12 +11,17 @@ from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapit
 
 def anchoLargoTerminal(solicita):
     """ Configurar terminal"""
-    lineas = sistema.get_terminal_size().lines
-    if sistema.get_terminal_size().columns < 80:
-        print("Su terminal es demasiado pequeña para jugar.")
-        return
-    else:
-        columnas = (lambda columna: 80 if columna>=100 else 80) (sistema.get_terminal_size().columns)
+    try:
+        lineas = sistema.get_terminal_size().lines
+        if sistema.get_terminal_size().columns < 80:
+            print("Su terminal es demasiado pequeña para jugar.")
+            return
+        else:
+            columnas = (lambda columna: 80 if columna>=100 else 80) (sistema.get_terminal_size().columns)
+    except (OSError, AttributeError) as e:
+        print("Error al obtener el tamaño de la terminal. Usando valores por defecto.")
+        lineas = 24
+        columnas = 80
 
     bordeIzquierdo = (columnas//4)
     centro = bordeIzquierdo * 2
@@ -93,65 +98,97 @@ def imprimirBienvenida():
     
 def obtenerNombreJugador():
     """ Obtiene nombre del jugador """
-    columnas = anchoLargoTerminal('columnas')
-    patron = '^[a-zA-Z]{3,15}$'
-    nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
-    lineaBorrar = 2
-    while re.search(patron,nombre) == None:
+    try:
+        columnas = anchoLargoTerminal('columnas')
+        patron = '^[a-zA-Z]{3,15}$'
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
-        lineaBorrar += 2
-    borrarLineas(lineaBorrar)
-    return nombre
+        lineaBorrar = 2
+        while re.search(patron,nombre) == None:
+            nombre = input("Por favor, ingrese un nombre de jugador\n".center(columnas))
+            lineaBorrar += 2
+        borrarLineas(lineaBorrar)
+        return nombre
+    except (KeyboardInterrupt, EOFError):
+        print("\n\nEntrada cancelada por el usuario.")
+        return "Jugador"
+    except Exception as e:
+        print(f"Error inesperado al obtener nombre: {e}")
+        return "Jugador"
 
 def eleccionHistoria(nombreJugador):
-    lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('*')
-    mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
-    mensajeHilos1 = textwrap.fill(mensajeHilos1,bordeIzquierdo+centro)
-    imprimirParrafo(mensajeHilos1)
-    
-    rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
-    hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
-    max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
-    
-    for diccionario in hilos.hilos:
-        espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordeIzquierdo)
-        print(
-              " " * (bordeIzquierdo//2) +
-              f"{diccionario['Hilo']}" +
-                espacios_relleno +
-              f"opción:{diccionario['opcion']}")
+    try:
+        lineas,columnas,bordeIzquierdo,centro,bordeDerecho = anchoLargoTerminal('*')
+        mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
+        mensajeHilos1 = textwrap.fill(mensajeHilos1,bordeIzquierdo+centro)
+        imprimirParrafo(mensajeHilos1)
         
-    ejecutar_accion_por_opcion()
+        rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
+        hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
+        max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
+        
+        for diccionario in hilos.hilos:
+            espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordeIzquierdo)
+            print(
+                  " " * (bordeIzquierdo//2) +
+                  f"{diccionario['Hilo']}" +
+                    espacios_relleno +
+                  f"opción:{diccionario['opcion']}")
+            
+        ejecutar_accion_por_opcion()
+    except FileNotFoundError:
+        print("Error: No se encontró el archivo de hilos. Verifique que el archivo data/hilos/hilos.py existe.")
+    except ImportError as e:
+        print(f"Error al cargar el módulo de hilos: {e}")
+    except Exception as e:
+        print(f"Error inesperado en la selección de historia: {e}")
 
 def ejecutar_accion_por_opcion():
     while True:
-        opcion_input = input("Selecciona una opción: ")
-        if opcion_input == "" or not opcion_input.isdigit():
-            print("Opción no válida. Por favor, ingresa un número valido.")
-            continue
-        opcion_elegida = int(opcion_input)
-        match opcion_elegida:
-            case 1:
-                humorCapituloInicial.start()
-                break
-            case 2:
-                accionCapituloInicial.start()
-                break
-            case 3:
-                dramaCapituloInicial.start()
-                break
-            case 4:
-                terrorCapituloInicial.start()
-                break
-            case _:
-                print("Opción no válida. Por favor, intenta nuevamente.")
+        try:
+            opcion_input = input("Selecciona una opción: ")
+            if opcion_input == "" or not opcion_input.isdigit():
+                print("Opción no válida. Por favor, ingresa un número valido.")
+                continue
+            opcion_elegida = int(opcion_input)
+            match opcion_elegida:
+                case 1:
+                    humorCapituloInicial.start()
+                    break
+                case 2:
+                    accionCapituloInicial.start()
+                    break
+                case 3:
+                    dramaCapituloInicial.start()
+                    break
+                case 4:
+                    terrorCapituloInicial.start()
+                    break
+                case _:
+                    print("Opción no válida. Por favor, intenta nuevamente.")
+        except (KeyboardInterrupt, EOFError):
+            print("\n\nJuego cancelado por el usuario.")
+            break
+        except AttributeError as e:
+            print(f"Error: El módulo de historia seleccionado no tiene la función 'start': {e}")
+            break
+        except Exception as e:
+            print(f"Error inesperado al ejecutar la opción: {e}")
+            break
 
             
     
 def main ():
     """Comienzo de programa"""
-    imprimirCabecera()
-    nombreJugador = obtenerNombreJugador()
-    eleccionHistoria(nombreJugador)
+    try:
+        imprimirCabecera()
+        nombreJugador = obtenerNombreJugador()
+        eleccionHistoria(nombreJugador)
+    except KeyboardInterrupt:
+        print("\n\n¡Gracias por jugar Destiny Weaver! ¡Hasta la próxima!")
+    except Exception as e:
+        print(f"\nError crítico en el juego: {e}")
+        print("El juego se cerrará para evitar daños mayores.")
+    finally:
+        print("\nDestiny Weaver ha finalizado.")
 
 main()
