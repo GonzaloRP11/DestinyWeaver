@@ -163,6 +163,7 @@ def ejecutarHiloHumor():
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in humorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        print("\n")
         
         """Verificar si el usuario quiere salir"""
         if indice > 0:
@@ -174,6 +175,7 @@ def ejecutarHiloHumor():
         #while  respuestaJugador not in opcionesValidas: 
             print(f"Opción inválida. Intente nuevamente\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            print("\n")
             if respuestaJugador == "SALIR":
                 continuar = False
                 print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
@@ -269,6 +271,7 @@ def ejecutarHiloAccion():
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in accionCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        print("\n")
         
         """Verificar si el usuario quiere salir"""
         if indice > 0:
@@ -280,6 +283,7 @@ def ejecutarHiloAccion():
         #while  respuestaJugador not in opcionesValidas: 
             print(f"Opción inválida. Intente nuevamente\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            print("\n")
             if respuestaJugador == "SALIR":
                 continuar = False
                 print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
@@ -375,6 +379,7 @@ def ejecutarHiloTerror():
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in terrorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        print("\n")
         
         """Verificar si el usuario quiere salir"""
         if indice > 0:
@@ -386,6 +391,7 @@ def ejecutarHiloTerror():
         #while  respuestaJugador not in opcionesValidas: 
             print(f"Opción inválida. Intente nuevamente\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            print("\n")
             if respuestaJugador == "SALIR":
                 continuar = False
                 print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
@@ -481,6 +487,7 @@ def ejecutarHiloDrama():
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in dramaCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        print("\n")
         
         """Verificar si el usuario quiere salir"""
         if indice > 0:
@@ -492,6 +499,7 @@ def ejecutarHiloDrama():
         #while  respuestaJugador not in opcionesValidas: 
             print(f"Opción inválida. Intente nuevamente\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            print("\n")
             if respuestaJugador == "SALIR":
                 continuar = False
                 print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")

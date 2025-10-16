@@ -22,7 +22,7 @@ historial = [
 
                             "B - Acercarte con Confrontación Furtiva (Buscar la verdad).\n"
                         ),
-            "opciones":[],
+            "opciones":["A - Retroceder con Evasión Silenciosa (Buscar seguridad).","B - Acercarte con Confrontación Furtiva (Buscar la verdad)."],
             "respuesta_jugador":""
     }
 ]
