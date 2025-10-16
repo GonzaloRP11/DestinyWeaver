@@ -15,10 +15,10 @@ historial = [
                                "2. El Camino de la Estrategia:  Canalizar la furia en una determinación fría, planear la venganza con precisión y paciencia, utilizando la rabia como combustible para la astucia.\n"
                                "Es un camino lento, donde el enemigo podría **ver tu golpe venir si dudas.\n"
                                "¿Qué harás con la fuerza del Hilo de la Furia?\n"
-                               "A- Seguir el impulso ciego (Devastación).\n"
-                               "B- Planear con frialdad (Estrategia)."
+                               "A - Seguir el impulso ciego (Devastación).\n"
+                               "B - Planear con frialdad (Estrategia)."
                         ),
-            "opciones":['A-Seguir el impulso ciego (Devastación).','B-Planear con frialdad (Estrategia).'],
+            "opciones":['A- Seguir el impulso ciego (Devastación).','B- Planear con frialdad (Estrategia).'],
             "respuesta_jugador":""
     }
 ]
