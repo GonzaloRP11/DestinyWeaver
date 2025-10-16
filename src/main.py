@@ -106,7 +106,6 @@ def imprimirParrafo(parrafo):
         print("\n".join(textwrap.wrap(linea, width=ancho, initial_indent=indent, subsequent_indent=indent)))
     print()
     
-
 def imprimirBienvenida():
     """Imprimir mensaje de bienvenida e introducción"""
     ancho = anchoLargoTerminal('ancho')
@@ -579,8 +578,6 @@ def ejecutarHiloDrama():
         )
         indice += 1       
 
-    
-
 def ejecutar_accion_por_opcion(nombreJugador):
     bordes =anchoLargoTerminal('bordes')
     opciones = ['1','2','3','4']
@@ -607,12 +604,9 @@ def ejecutar_accion_por_opcion(nombreJugador):
         case '_':
             print("Opción no válida. Se ha finalizado el juego.")
             sys.exit()
-
             
-    
 def main ():
     """Comienzo de programa"""
     imprimirCabecera()
     eleccionHistoria(obtenerNombreJugador())
-
 main()
