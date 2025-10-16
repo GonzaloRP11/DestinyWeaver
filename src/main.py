@@ -156,7 +156,110 @@ def eleccionHistoria(nombreJugador):
     ejecutar_accion_por_opcion(nombreJugador)
 
 def ejecutarHiloHumor():
-    print()
+    bordes = anchoLargoTerminal('bordes')
+    imprimirParrafo(humorCapituloInicial.historial[0]["contenido"])
+    patron = r'^[A-Za-z]$'
+    indice = 0
+    continuar = True
+    while continuar:
+        opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in humorCapituloInicial.historial[indice]["opciones"]]
+        respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        
+        """Verificar si el usuario quiere salir"""
+        if indice > 0:
+            if respuestaJugador == "SALIR":
+                print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                break
+
+        while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
+        #while  respuestaJugador not in opcionesValidas: 
+            print(f"Opción inválida. Intente nuevamente\n")
+            respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            if respuestaJugador == "SALIR":
+                continuar = False
+                print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
+                sys.exit()
+            
+        
+        humorCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        #Interacción inicial con la ia para que entienda el contexto
+        responseNarrativa = requests.post(
+                                            'http://localhost:11434/api/generate',
+                                            json={
+                                                'model': 'phi3:mini',
+                                                'prompt': f'''  Contexto: {humorCapituloInicial.historial[indice]['contenido']}
+                                                                Acciones válidas: {humorCapituloInicial.historial[indice]['opciones']}
+                                                                Acción anterior del jugador: {humorCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
+                                                                Requisitos estrictos:
+                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No agregues opciones nuevas.
+                                                                No menciones la variable del jugador ni la acción anterior de forma directa.
+                                                                La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {humorCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
+                                                                Este formato es obligatorio. No lo ignores.''',
+                                                'options': {
+                                                                "num_predict": 400,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                "temperature": 0.15,   # baja verbosidad
+                                                                "top_p": 0.7,
+                                                                "stop_sequence": ["\n", "Opción", "Respuesta", "Historia:", "Jugador:"]
+                                                        }
+                                            },
+                                            stream=True
+                    
+        )
+    #Procesa la respuesta de la ia en un buffer
+        contenidoNarrativa = ""
+        for line in responseNarrativa.text.strip().split('\n'):
+            if line:
+                data = json.loads(line)
+                contenidoNarrativa += data['response']
+        #Imprime en pantalla la narrativa generada
+        imprimirParrafo(contenidoNarrativa)
+        
+        #Envia a la ia la narrativa generada para obtener un listado de opciones del juego
+        responseOpciones = requests.post(
+                                    'http://localhost:11434/api/generate',
+                                    json={
+                                        'model': 'phi3:mini',
+                                        'prompt': f'''Historia:{contenidoNarrativa}. Genera una lista de como máximo 3 opciones, cada una de ellas  como máximo puede contener 5 palabras y debe describir la accióna seguir por el jugador.
+                                                    Cada opción debe cumplir estrictamente estas reglas:
+                                                    Máximo de 4 palabras por oración.
+                                                    Formato obligatorio: Letra inicial + espacio + guion medio + espacio + descripción de la acción.
+                                                    Ejemplo de formato: A - Avanzar por el bosque.
+                                                    Devuelve solo la lista, sin texto adicional, sin explicaciones y sin saltarte ninguna regla.
+                                                    Este formato es obligatorio. No lo ignores.''',
+                                        'options': {
+                                                                    "num_predict": 150,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                    "temperature": 0.15,   # baja verbosidad
+                                                                    "top_p": 0.7,
+                                                                    "stop_sequence": ["\n", "Historia:", "Opción:"]
+                                                            }
+                                    }
+                                )
+        #Procesa opciones generadas por la ia en base a la narrativa
+        bufferOpciones = ""
+        for line in responseOpciones.iter_lines():
+            if line:
+                data = json.loads(line)
+                bufferOpciones += data['response']
+        
+        #Imprime las opciones en pantalla
+        imprimirOpciones(formatear_opciones(bufferOpciones))
+
+        listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
+
+        #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
+        humorCapituloInicial.historial.append(
+            {
+                "nombre_jugador":humorCapituloInicial.historial[indice]['nombre_jugador'],
+                "contenido": contenidoNarrativa,
+                "opciones":listaOpciones,
+                "respuesta_jugador":"",
+            }
+        )
+        indice += 1
         
 def ejecutarHiloAccion():
     bordes = anchoLargoTerminal('bordes')
@@ -265,10 +368,217 @@ def ejecutarHiloAccion():
         indice += 1       
 
 def ejecutarHiloTerror():
-    print()
+    bordes = anchoLargoTerminal('bordes')
+    imprimirParrafo(terrorCapituloInicial.historial[0]["contenido"])
+    patron = r'^[A-Za-z]$'
+    indice = 0
+    continuar = True
+    while continuar:
+        opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in terrorCapituloInicial.historial[indice]["opciones"]]
+        respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        
+        """Verificar si el usuario quiere salir"""
+        if indice > 0:
+            if respuestaJugador == "SALIR":
+                print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                break
+
+        while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
+        #while  respuestaJugador not in opcionesValidas: 
+            print(f"Opción inválida. Intente nuevamente\n")
+            respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            if respuestaJugador == "SALIR":
+                continuar = False
+                print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
+                sys.exit()
+            
+        
+        terrorCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        #Interacción inicial con la ia para que entienda el contexto
+        responseNarrativa = requests.post(
+                                            'http://localhost:11434/api/generate',
+                                            json={
+                                                'model': 'phi3:mini',
+                                                'prompt': f'''  Contexto: {terrorCapituloInicial.historial[indice]['contenido']}
+                                                                Acciones válidas: {terrorCapituloInicial.historial[indice]['opciones']}
+                                                                Acción anterior del jugador: {terrorCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
+                                                                Requisitos estrictos:
+                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No agregues opciones nuevas.
+                                                                No menciones la variable del jugador ni la acción anterior de forma directa.
+                                                                La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {terrorCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
+                                                                Este formato es obligatorio. No lo ignores.''',
+                                                'options': {
+                                                                "num_predict": 400,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                "temperature": 0.15,   # baja verbosidad
+                                                                "top_p": 0.7,
+                                                                "stop_sequence": ["\n", "Opción", "Respuesta", "Historia:", "Jugador:"]
+                                                        }
+                                            },
+                                            stream=True
+                    
+        )
+    #Procesa la respuesta de la ia en un buffer
+        contenidoNarrativa = ""
+        for line in responseNarrativa.text.strip().split('\n'):
+            if line:
+                data = json.loads(line)
+                contenidoNarrativa += data['response']
+        #Imprime en pantalla la narrativa generada
+        imprimirParrafo(contenidoNarrativa)
+        
+        #Envia a la ia la narrativa generada para obtener un listado de opciones del juego
+        responseOpciones = requests.post(
+                                    'http://localhost:11434/api/generate',
+                                    json={
+                                        'model': 'phi3:mini',
+                                        'prompt': f'''Historia:{contenidoNarrativa}. Genera una lista de como máximo 3 opciones, cada una de ellas  como máximo puede contener 5 palabras y debe describir la accióna seguir por el jugador.
+                                                    Cada opción debe cumplir estrictamente estas reglas:
+                                                    Máximo de 4 palabras por oración.
+                                                    Formato obligatorio: Letra inicial + espacio + guion medio + espacio + descripción de la acción.
+                                                    Ejemplo de formato: A - Avanzar por el bosque.
+                                                    Devuelve solo la lista, sin texto adicional, sin explicaciones y sin saltarte ninguna regla.
+                                                    Este formato es obligatorio. No lo ignores.''',
+                                        'options': {
+                                                                    "num_predict": 150,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                    "temperature": 0.15,   # baja verbosidad
+                                                                    "top_p": 0.7,
+                                                                    "stop_sequence": ["\n", "Historia:", "Opción:"]
+                                                            }
+                                    }
+                                )
+        #Procesa opciones generadas por la ia en base a la narrativa
+        bufferOpciones = ""
+        for line in responseOpciones.iter_lines():
+            if line:
+                data = json.loads(line)
+                bufferOpciones += data['response']
+        
+        #Imprime las opciones en pantalla
+        imprimirOpciones(formatear_opciones(bufferOpciones))
+
+        listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
+
+        #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
+        terrorCapituloInicial.historial.append(
+            {
+                "nombre_jugador":terrorCapituloInicial.historial[indice]['nombre_jugador'],
+                "contenido": contenidoNarrativa,
+                "opciones":listaOpciones,
+                "respuesta_jugador":"",
+            }
+        )
+        indice += 1       
 
 def ejecutarHiloDrama():
-    print()
+    bordes = anchoLargoTerminal('bordes')
+    imprimirParrafo(dramaCapituloInicial.historial[0]["contenido"])
+    patron = r'^[A-Za-z]$'
+    indice = 0
+    continuar = True
+    while continuar:
+        opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in dramaCapituloInicial.historial[indice]["opciones"]]
+        respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+        
+        """Verificar si el usuario quiere salir"""
+        if indice > 0:
+            if respuestaJugador == "SALIR":
+                print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                break
+
+        while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
+        #while  respuestaJugador not in opcionesValidas: 
+            print(f"Opción inválida. Intente nuevamente\n")
+            respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
+            if respuestaJugador == "SALIR":
+                continuar = False
+                print(" " * (bordes//4) + "\nFin de la historia. ¡Hasta la próxima!")
+                sys.exit()
+            
+        
+        dramaCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        #Interacción inicial con la ia para que entienda el contexto
+        responseNarrativa = requests.post(
+                                            'http://localhost:11434/api/generate',
+                                            json={
+                                                'model': 'phi3:mini',
+                                                'prompt': f'''  Contexto: {dramaCapituloInicial.historial[indice]['contenido']}
+                                                                Acciones válidas: {dramaCapituloInicial.historial[indice]['opciones']}
+                                                                Acción anterior del jugador: {dramaCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
+                                                                Requisitos estrictos:
+                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No agregues opciones nuevas.
+                                                                No menciones la variable del jugador ni la acción anterior de forma directa.
+                                                                La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {dramaCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
+                                                                Este formato es obligatorio. No lo ignores.''',
+                                                'options': {
+                                                                "num_predict": 400,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                "temperature": 0.15,   # baja verbosidad
+                                                                "top_p": 0.7,
+                                                                "stop_sequence": ["\n", "Opción", "Respuesta", "Historia:", "Jugador:"]
+                                                        }
+                                            },
+                                            stream=True
+                    
+        )
+    #Procesa la respuesta de la ia en un buffer
+        contenidoNarrativa = ""
+        for line in responseNarrativa.text.strip().split('\n'):
+            if line:
+                data = json.loads(line)
+                contenidoNarrativa += data['response']
+        #Imprime en pantalla la narrativa generada
+        imprimirParrafo(contenidoNarrativa)
+        
+        #Envia a la ia la narrativa generada para obtener un listado de opciones del juego
+        responseOpciones = requests.post(
+                                    'http://localhost:11434/api/generate',
+                                    json={
+                                        'model': 'phi3:mini',
+                                        'prompt': f'''Historia:{contenidoNarrativa}. Genera una lista de como máximo 3 opciones, cada una de ellas  como máximo puede contener 5 palabras y debe describir la accióna seguir por el jugador.
+                                                    Cada opción debe cumplir estrictamente estas reglas:
+                                                    Máximo de 4 palabras por oración.
+                                                    Formato obligatorio: Letra inicial + espacio + guion medio + espacio + descripción de la acción.
+                                                    Ejemplo de formato: A - Avanzar por el bosque.
+                                                    Devuelve solo la lista, sin texto adicional, sin explicaciones y sin saltarte ninguna regla.
+                                                    Este formato es obligatorio. No lo ignores.''',
+                                        'options': {
+                                                                    "num_predict": 150,   # ≈ límite de tokens (unos 70–90 palabras)
+                                                                    "temperature": 0.15,   # baja verbosidad
+                                                                    "top_p": 0.7,
+                                                                    "stop_sequence": ["\n", "Historia:", "Opción:"]
+                                                            }
+                                    }
+                                )
+        #Procesa opciones generadas por la ia en base a la narrativa
+        bufferOpciones = ""
+        for line in responseOpciones.iter_lines():
+            if line:
+                data = json.loads(line)
+                bufferOpciones += data['response']
+        
+        #Imprime las opciones en pantalla
+        imprimirOpciones(formatear_opciones(bufferOpciones))
+
+        listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
+
+        #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
+        dramaCapituloInicial.historial.append(
+            {
+                "nombre_jugador":dramaCapituloInicial.historial[indice]['nombre_jugador'],
+                "contenido": contenidoNarrativa,
+                "opciones":listaOpciones,
+                "respuesta_jugador":"",
+            }
+        )
+        indice += 1       
+
     
 
 def ejecutar_accion_por_opcion(nombreJugador):
