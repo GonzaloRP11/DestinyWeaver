@@ -139,20 +139,27 @@ def eleccionHistoria(nombreJugador):
     mensajeHilos1 = "El murmullo de los hilos se intensifica, como si un telar invisible vibrara en la penumbra. Una voz etérea se filtra en tu mente, clara como un susurro y burlona como una sonrisa escondida: El telar del destino te aguarda, tejedor. ¿Qué historia deseas entrelazar en su tapiz? Ante ti se despliegan cuatro hilos brillando con vida propia:"
     imprimirParrafo(mensajeHilos1)
     
-    rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
-    hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
-    max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
-    
-    for diccionario in hilos.hilos:
-        espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordes)
-        print(
-              " " * (bordes//4) +
-              f"{diccionario['Hilo']}" +
-                espacios_relleno +
-              f"opción:{diccionario['opcion']}",end="\n")
-    print("\n")
+    try:
+        rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
+        hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
+        max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
         
-    ejecutar_accion_por_opcion(nombreJugador)
+        for diccionario in hilos.hilos:
+            espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordes)
+            print(
+                  " " * (bordes//4) +
+                  f"{diccionario['Hilo']}" +
+                    espacios_relleno +
+                  f"opción:{diccionario['opcion']}",end="\n")
+        print("\n")
+    except FileNotFoundError:
+        print("Error: No se encontró el archivo de hilos. Verifica que 'data/hilos/hilos.py' exista.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error al cargar los hilos: {e}")
+        sys.exit(1)
+    else:
+        ejecutar_accion_por_opcion(nombreJugador)
 
 def ejecutarHiloHumor():
     bordes = anchoLargoTerminal('bordes')
@@ -613,8 +620,26 @@ def ejecutar_accion_por_opcion(nombreJugador):
             print("Opción no válida. Se ha finalizado el juego.")
             sys.exit()
             
-def main ():
+def main():
     """Comienzo de programa"""
-    imprimirCabecera()
-    eleccionHistoria(obtenerNombreJugador())
-main()
+    try:
+        imprimirCabecera()
+        nombre = obtenerNombreJugador()
+    except KeyboardInterrupt:
+        print("\n\nJuego cancelado por el usuario. ¡Hasta pronto!")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\nError al inicializar el juego: {e}")
+        sys.exit(1)
+    else:
+        try:
+            eleccionHistoria(nombre)
+        except KeyboardInterrupt:
+            print("\n\nJuego interrumpido por el usuario. ¡Gracias por jugar!")
+        except Exception as e:
+            print(f"\nSe produjo un error durante el juego: {e}")
+        finally:
+            print("\n" + " " * (anchoLargoTerminal('bordes')//4) + "Destiny Weaver - Fin de la sesión")
+
+if __name__ == "__main__":
+    main()
