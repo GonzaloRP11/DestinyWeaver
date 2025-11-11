@@ -71,6 +71,13 @@ def anchoLargoTerminal(solicita):
             print("Parámetro no reconocido. Use: 'bordeizquierdo', 'centro', 'bordederecho', 'lineas', 'columnas', 'bordescentro' o '*'.")
             return None
 
+def guardar_historial_json(nombre_archivo, datos):
+    """Guarda el historial completo del juego en un archivo .json"""
+    with open(nombre_archivo, "w", encoding="utf-8") as archivo:
+        json.dump(datos, archivo, ensure_ascii=False, indent=4)
+    print(f"\nEl historial del juego se guardó en '{nombre_archivo}'.")
+
+
 def borrarLineas(cantLineas):
     """ Borrar lineas de la consola"""
     for _ in range(cantLineas):
@@ -204,6 +211,7 @@ def ejecutarHiloHumor():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                guardar_historial_json("historial_humor.json", humorCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
@@ -312,6 +320,7 @@ def ejecutarHiloAccion():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                guardar_historial_json("historial_accion.json", accionCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
@@ -420,6 +429,7 @@ def ejecutarHiloTerror():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                guardar_historial_json("historial_terror.json", terrorCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
@@ -528,6 +538,7 @@ def ejecutarHiloDrama():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
+                guardar_historial_json("historial_drama.json", dramaCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
