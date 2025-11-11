@@ -11,6 +11,27 @@ sys.path.append(sistema.path.abspath(sistema.path.join(sistema.path.dirname(__fi
 from importlib.machinery import SourceFileLoader
 from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapituloInicial, terrorCapituloInicial
 
+
+OPCIONES_MENU = ('1', '2', '3', '4')
+
+LIMITES_ANCHO = (70, 90, 110, 100)  # (minimo, pequeño, mediano, grande)
+
+MENSAJES_ERROR = [
+    "Opción inválida. Intente nuevamente",
+    "Su terminal es demasiado pequeña para jugar",
+    "Error al cargar los hilos"
+]
+
+NUMEROS_VALIDOS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+POSICION_INICIAL = (0, 0)  # (x, y)
+
+CARACTERES_ESPECIALES = ['*', '-', '|', '+']
+
+RANGO_TEMPERATURA = (0.0, 1.0)  # (minimo, maximo)
+
+GENEROS_HISTORIA = ['Humor', 'Acción', 'Drama', 'Terror']
+
 def anchoLargoTerminal(solicita):
     """ Configurar terminal
         Ajusta automáticamente el ancho más adecuado para texto.
@@ -19,18 +40,19 @@ def anchoLargoTerminal(solicita):
     size = sistema.get_terminal_size() if sistema.isatty(0) else sistema.terminal_size((100, 25))
     columnas, lineas = size.columns, size.lines
 
-    # Validación de tamaño mínimo
-    if columnas < 70:
-        print("Su terminal es demasiado pequeña para jugar (mínimo 70 columnas).")
+    # Validación de tamaño mínimo 
+    minimo, pequeno, mediano, grande = LIMITES_ANCHO
+    if columnas < minimo:
+        print(f"{MENSAJES_ERROR[1]} (mínimo {minimo} columnas).")
         sys.exit()
 
-    # Determinar ancho de trabajo óptimo
-    if columnas < 90:
-        ancho = 70
-    elif columnas < 110:
-        ancho = 90
+    # Determinar ancho de trabajo óptimo 
+    if columnas < pequeno:
+        ancho = minimo
+    elif columnas < mediano:
+        ancho = pequeno
     else:
-        ancho = 100  
+        ancho = grande  
     
     
     bordes = (ancho//4)
@@ -57,7 +79,8 @@ def borrarLineas(cantLineas):
 def imprimirSeparador():
     """ Impresión de separador"""
     ancho = anchoLargoTerminal('ancho')
-    listaArtetiscos = '*' * ancho
+    caracter_separador = CARACTERES_ESPECIALES[0] 
+    listaArtetiscos = caracter_separador * ancho
     for i in range(0,2):
         print(listaArtetiscos) 
  
@@ -109,28 +132,33 @@ def imprimirParrafo(parrafo):
 def imprimirBienvenida():
     """Imprimir mensaje de bienvenida e introducción"""
     ancho = anchoLargoTerminal('ancho')
-    mensajeBienvenida = "¡Bienvenido a Destiny Weaver!"
-    print(mensajeBienvenida.center(ancho))
+    mensajes_bienvenida = [
+        "¡Bienvenido a Destiny Weaver!",
+        "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.",
+        "Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.",
+        "En este viaje, cada hilo que unes te conecta a un destino único.",
+        "El futuro no está escrito; tú eres el tejedor de tu propia historia."
+    ]
+    
+    print(mensajes_bienvenida[0].center(ancho))
     print("\n")
     
-    mensajeDescripcion = (
-        "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.\n"
-        "Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.\n"
-        "En este viaje, cada hilo que unes te conecta a un destino único.\n"
-        "El futuro no está escrito; tú eres el tejedor de tu propia historia."
-    )
+    mensajeDescripcion = "\n".join(mensajes_bienvenida[1:])
 
     imprimirParrafo(mensajeDescripcion)
     
 def obtenerNombreJugador():
     """ Obtiene nombre del jugador """
     ancho = anchoLargoTerminal('ancho')
-    patron = '^[a-zA-Z]{3,15}$'
+    limites_nombre = (3, 15)  # (minimo, maximo)
+    minimo, maximo = limites_nombre
+    patron = f'^[a-zA-Z]{{{minimo},{maximo}}}$'
     nombre = input("Por favor, ingrese un nombre de jugador\n".center(ancho))
-    lineaBorrar = 2
+    contador_lineas = (2, 2)  # (inicial, incremento)
+    lineaBorrar = contador_lineas[0]
     while re.search(patron,nombre) == None:
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(ancho))
-        lineaBorrar += 2
+        lineaBorrar += contador_lineas[1]
     borrarLineas(lineaBorrar)
     return nombre
 
@@ -153,7 +181,7 @@ def eleccionHistoria(nombreJugador):
                   f"opción:{diccionario['opcion']}",end="\n")
         print("\n")
     except FileNotFoundError:
-        print("Error: No se encontró el archivo de hilos. Verifica que 'data/hilos/hilos.py' exista.")
+        print(f"Error: {MENSAJES_ERROR[2]}. Verifica que 'data/hilos/hilos.py' exista.")
         sys.exit(1)
     except Exception as e:
         print(f"Error al cargar los hilos: {e}")
@@ -165,8 +193,8 @@ def ejecutarHiloHumor():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(humorCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    indice = 0
-    continuar = True
+    estado_juego = (0, True)  # (indice, continuar)
+    indice, continuar = estado_juego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in humorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -180,7 +208,7 @@ def ejecutarHiloHumor():
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"Opción inválida. Intente nuevamente\n")
+            print(f"{MENSAJES_ERROR[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -273,8 +301,8 @@ def ejecutarHiloAccion():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(accionCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    indice = 0
-    continuar = True
+    estado_juego = (0, True)  # (indice, continuar)
+    indice, continuar = estado_juego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in accionCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -288,7 +316,7 @@ def ejecutarHiloAccion():
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"Opción inválida. Intente nuevamente\n")
+            print(f"{MENSAJES_ERROR[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -381,8 +409,8 @@ def ejecutarHiloTerror():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(terrorCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    indice = 0
-    continuar = True
+    estado_juego = (0, True)  # (indice, continuar)
+    indice, continuar = estado_juego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in terrorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -396,7 +424,7 @@ def ejecutarHiloTerror():
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"Opción inválida. Intente nuevamente\n")
+            print(f"{MENSAJES_ERROR[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -489,8 +517,8 @@ def ejecutarHiloDrama():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(dramaCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    indice = 0
-    continuar = True
+    estado_juego = (0, True)  # (indice, continuar)
+    indice, continuar = estado_juego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in dramaCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -504,7 +532,7 @@ def ejecutarHiloDrama():
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"Opción inválida. Intente nuevamente\n")
+            print(f"{MENSAJES_ERROR[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -594,12 +622,11 @@ def ejecutarHiloDrama():
         indice += 1       
 
 def ejecutar_accion_por_opcion(nombreJugador):
-    bordes =anchoLargoTerminal('bordes')
-    opciones = ['1','2','3','4']
+    bordes = anchoLargoTerminal('bordes')
     opcion_input = input(" " * (bordes//4) + "Selecciona una opción:\t")
     print("\n")
 
-    while opcion_input not in opciones:
+    while opcion_input not in OPCIONES_MENU:
         opcion_input = input(" " * (bordes//4) +"Selecciona una opción:\t")
         print("\n")
     
