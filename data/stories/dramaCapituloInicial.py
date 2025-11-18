@@ -1,6 +1,6 @@
 historial = [
     {
-            "nombre_jugador":"",
+            "nombreJugador":"",
             "contenido":(
                             "El Peso del Hilo Plateado\n"
                             
@@ -23,6 +23,6 @@ historial = [
                             "B - Limpiar la Estatua (Honrar la memoria).\n"
                         ),
             "opciones":['A - Abrir el Cofre (Enfrentar el recuerdo).','B - Limpiar la Estatua (Honrar la memoria).'],
-            "respuesta_jugador":""
+            "respuestaJugador":""
     }
 ]

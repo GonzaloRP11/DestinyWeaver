@@ -1,6 +1,6 @@
 historial = [
     {
-            "nombre_jugador":"",
+            "nombreJugador":"",
             "contenido":(
                             "El Tirón del Hilo Amarillo\n"
                             
@@ -25,6 +25,6 @@ historial = [
                             "B - Provocar el Tropiezo Épico (Crear un caos controlado)."
                         ),
             "opciones":['A - Utilizar la Palabra Absurda (Confundir al guardia).','B - Provocar el Tropiezo Épico (Crear un caos controlado).'],
-            "respuesta_jugador":""
+            "respuestaJugador":""
     }
 ]

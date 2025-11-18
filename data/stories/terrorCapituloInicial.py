@@ -1,6 +1,6 @@
 historial = [
     {
-            "nombre_jugador":"",
+            "nombreJugador":"",
             "contenido":(
                             "La Fragilidad del Hilo Azul Oscuro\n"
                            
@@ -23,6 +23,6 @@ historial = [
                             "B - Acercarte con Confrontación Furtiva (Buscar la verdad).\n"
                         ),
             "opciones":["A - Retroceder con Evasión Silenciosa (Buscar seguridad).","B - Acercarte con Confrontación Furtiva (Buscar la verdad)."],
-            "respuesta_jugador":""
+            "respuestaJugador":""
     }
 ]

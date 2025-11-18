@@ -12,25 +12,25 @@ from importlib.machinery import SourceFileLoader
 from data.stories import accionCapituloInicial, dramaCapituloInicial, humorCapituloInicial, terrorCapituloInicial
 
 
-OPCIONES_MENU = ('1', '2', '3', '4')
+opcionesMenu = ('1', '2', '3', '4')
 
-LIMITES_ANCHO = (70, 90, 110, 100)  # (minimo, pequeño, mediano, grande)
+limitesAncho = (70, 90, 110, 100)  # (minimo, pequeño, mediano, grande)
 
-MENSAJES_ERROR = [
+mensajesError = [
     "Opción inválida. Intente nuevamente",
     "Su terminal es demasiado pequeña para jugar",
     "Error al cargar los hilos"
 ]
 
-NUMEROS_VALIDOS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+numerosValidos = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-POSICION_INICIAL = (0, 0)  # (x, y)
+posicionInicial = (0, 0)  # (x, y)
 
-CARACTERES_ESPECIALES = ['*', '-', '|', '+']
+caracteresEspeciales = ['*', '-', '|', '+']
 
-RANGO_TEMPERATURA = (0.0, 1.0)  # (minimo, maximo)
+rangoTemperatura = (0.0, 1.0)  # (minimo, maximo)
 
-GENEROS_HISTORIA = ['Humor', 'Acción', 'Drama', 'Terror']
+generosHistoria = ['Humor', 'Acción', 'Drama', 'Terror']
 
 def anchoLargoTerminal(solicita):
     """ Configurar terminal
@@ -41,9 +41,9 @@ def anchoLargoTerminal(solicita):
     columnas, lineas = size.columns, size.lines
 
     # Validación de tamaño mínimo 
-    minimo, pequeno, mediano, grande = LIMITES_ANCHO
+    minimo, pequeno, mediano, grande = limitesAncho
     if columnas < minimo:
-        print(f"{MENSAJES_ERROR[1]} (mínimo {minimo} columnas).")
+        print(f"{mensajesError[1]} (mínimo {minimo} columnas).")
         sys.exit()
 
     # Determinar ancho de trabajo óptimo 
@@ -71,11 +71,11 @@ def anchoLargoTerminal(solicita):
             print("Parámetro no reconocido. Use: 'bordeizquierdo', 'centro', 'bordederecho', 'lineas', 'columnas', 'bordescentro' o '*'.")
             return None
 
-def guardar_historial_json(nombre_archivo, datos):
+def guardarHistorialJson(nombreArchivo, datos):
     """Guarda el historial completo del juego en un archivo .json"""
-    with open(nombre_archivo, "w", encoding="utf-8") as archivo:
+    with open(nombreArchivo, "w", encoding="utf-8") as archivo:
         json.dump(datos, archivo, ensure_ascii=False, indent=4)
-    print(f"\nEl historial del juego se guardó en '{nombre_archivo}'.")
+    print(f"\nEl historial del juego se guardó en '{nombreArchivo}'.")
 
 
 def borrarLineas(cantLineas):
@@ -86,8 +86,8 @@ def borrarLineas(cantLineas):
 def imprimirSeparador():
     """ Impresión de separador"""
     ancho = anchoLargoTerminal('ancho')
-    caracter_separador = CARACTERES_ESPECIALES[0] 
-    listaArtetiscos = caracter_separador * ancho
+    caracterSeparador = caracteresEspeciales[0] 
+    listaArtetiscos = caracterSeparador * ancho
     for i in range(0,2):
         print(listaArtetiscos) 
  
@@ -96,7 +96,7 @@ def imprimirCabecera():
     imprimirSeparador()
     imprimirBienvenida()
 
-def formatear_opciones(texto):
+def formatearOpciones(texto):
     bordes = anchoLargoTerminal('bordes')
     ancho = anchoLargoTerminal('ancho')
     indent = " " * (bordes//4)
@@ -139,7 +139,7 @@ def imprimirParrafo(parrafo):
 def imprimirBienvenida():
     """Imprimir mensaje de bienvenida e introducción"""
     ancho = anchoLargoTerminal('ancho')
-    mensajes_bienvenida = [
+    mensajesBienvenida = [
         "¡Bienvenido a Destiny Weaver!",
         "Has llegado al borde de un mundo inexplorado, un lugar forjado por historias y el poder de las elecciones.",
         "Al dar tu primer paso, te sumerges en un tejido de destinos que se irá formando con cada una de tus decisiones.",
@@ -147,25 +147,25 @@ def imprimirBienvenida():
         "El futuro no está escrito; tú eres el tejedor de tu propia historia."
     ]
     
-    print(mensajes_bienvenida[0].center(ancho))
+    print(mensajesBienvenida[0].center(ancho))
     print("\n")
     
-    mensajeDescripcion = "\n".join(mensajes_bienvenida[1:])
+    mensajeDescripcion = "\n".join(mensajesBienvenida[1:])
 
     imprimirParrafo(mensajeDescripcion)
     
 def obtenerNombreJugador():
     """ Obtiene nombre del jugador """
     ancho = anchoLargoTerminal('ancho')
-    limites_nombre = (3, 15)  # (minimo, maximo)
-    minimo, maximo = limites_nombre
+    limitesNombre = (3, 15)  # (minimo, maximo)
+    minimo, maximo = limitesNombre
     patron = f'^[a-zA-Z]{{{minimo},{maximo}}}$'
     nombre = input("Por favor, ingrese un nombre de jugador\n".center(ancho))
-    contador_lineas = (2, 2)  # (inicial, incremento)
-    lineaBorrar = contador_lineas[0]
+    contadorLineas = (2, 2)  # (inicial, incremento)
+    lineaBorrar = contadorLineas[0]
     while re.search(patron,nombre) == None:
         nombre = input("Por favor, ingrese un nombre de jugador\n".center(ancho))
-        lineaBorrar += contador_lineas[1]
+        lineaBorrar += contadorLineas[1]
     borrarLineas(lineaBorrar)
     return nombre
 
@@ -177,31 +177,31 @@ def eleccionHistoria(nombreJugador):
     try:
         rutaArchivoHilos = sistema.path.abspath(sistema.path.join("data","hilos","hilos.py"))
         hilos = SourceFileLoader("hilos", rutaArchivoHilos).load_module() 
-        max_ancho_hilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
+        maxAnchoHilo = max(len(diccionario['Hilo']) for diccionario in hilos.hilos)  
         
         for diccionario in hilos.hilos:
-            espacios_relleno = " " * ((max_ancho_hilo - len(diccionario['Hilo'])) + bordes)
+            espaciosRelleno = " " * ((maxAnchoHilo - len(diccionario['Hilo'])) + bordes)
             print(
                   " " * (bordes//4) +
                   f"{diccionario['Hilo']}" +
-                    espacios_relleno +
+                    espaciosRelleno +
                   f"opción:{diccionario['opcion']}",end="\n")
         print("\n")
     except FileNotFoundError:
-        print(f"Error: {MENSAJES_ERROR[2]}. Verifica que 'data/hilos/hilos.py' exista.")
+        print(f"Error: {mensajesError[2]}. Verifica que 'data/hilos/hilos.py' exista.")
         sys.exit(1)
     except Exception as e:
         print(f"Error al cargar los hilos: {e}")
         sys.exit(1)
     else:
-        ejecutar_accion_por_opcion(nombreJugador)
+        ejecutarAccionPorOpcion(nombreJugador)
 
 def ejecutarHiloHumor():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(humorCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    estado_juego = (0, True)  # (indice, continuar)
-    indice, continuar = estado_juego
+    estadoJuego = (0, True)  # (indice, continuar)
+    indice, continuar = estadoJuego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in humorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -211,12 +211,12 @@ def ejecutarHiloHumor():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
-                guardar_historial_json("historial_humor.json", humorCapituloInicial.historial)
+                guardarHistorialJson("historial_humor.json", humorCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"{MENSAJES_ERROR[0]}\n")
+            print(f"{mensajesError[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -225,7 +225,7 @@ def ejecutarHiloHumor():
                 sys.exit()
             
         
-        humorCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        humorCapituloInicial.historial[indice].update({'respuestaJugador':respuestaJugador})
         #Interacción inicial con la ia para que entienda el contexto
         responseNarrativa = requests.post(
                                             'http://localhost:11434/api/generate',
@@ -233,14 +233,14 @@ def ejecutarHiloHumor():
                                                 'model': 'phi3:mini',
                                                 'prompt': f'''  Contexto: {humorCapituloInicial.historial[indice]['contenido']}
                                                                 Acciones válidas: {humorCapituloInicial.historial[indice]['opciones']}
-                                                                Acción anterior del jugador: {humorCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Acción anterior del jugador: {humorCapituloInicial.historial[indice]['respuestaJugador']}
                                                                 Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
                                                                 Requisitos estrictos:
-                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No incluyas la palabra "Historia:" ni ningún encabezado.
                                                                 No agregues opciones nuevas.
                                                                 No menciones la variable del jugador ni la acción anterior de forma directa.
                                                                 La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
-                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {humorCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {humorCapituloInicial.historial[indice]['nombreJugador']} solo cuando sea natural.
                                                                 Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
                                                                 Este formato es obligatorio. No lo ignores.''',
                                                 'options': {
@@ -290,17 +290,17 @@ def ejecutarHiloHumor():
                 bufferOpciones += data['response']
         
         #Imprime las opciones en pantalla
-        imprimirOpciones(formatear_opciones(bufferOpciones))
+        imprimirOpciones(formatearOpciones(bufferOpciones))
 
         listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
 
         #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
         humorCapituloInicial.historial.append(
             {
-                "nombre_jugador":humorCapituloInicial.historial[indice]['nombre_jugador'],
+                "nombreJugador":humorCapituloInicial.historial[indice]['nombreJugador'],
                 "contenido": contenidoNarrativa,
                 "opciones":listaOpciones,
-                "respuesta_jugador":"",
+                "respuestaJugador":"",
             }
         )
         indice += 1
@@ -309,8 +309,8 @@ def ejecutarHiloAccion():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(accionCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    estado_juego = (0, True)  # (indice, continuar)
-    indice, continuar = estado_juego
+    estadoJuego = (0, True)  # (indice, continuar)
+    indice, continuar = estadoJuego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in accionCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -320,12 +320,12 @@ def ejecutarHiloAccion():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
-                guardar_historial_json("historial_accion.json", accionCapituloInicial.historial)
+                guardarHistorialJson("historial_accion.json", accionCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"{MENSAJES_ERROR[0]}\n")
+            print(f"{mensajesError[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -334,7 +334,7 @@ def ejecutarHiloAccion():
                 sys.exit()
             
         
-        accionCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        accionCapituloInicial.historial[indice].update({'respuestaJugador':respuestaJugador})
         #Interacción inicial con la ia para que entienda el contexto
         responseNarrativa = requests.post(
                                             'http://localhost:11434/api/generate',
@@ -342,14 +342,14 @@ def ejecutarHiloAccion():
                                                 'model': 'phi3:mini',
                                                 'prompt': f'''  Contexto: {accionCapituloInicial.historial[indice]['contenido']}
                                                                 Acciones válidas: {accionCapituloInicial.historial[indice]['opciones']}
-                                                                Acción anterior del jugador: {accionCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Acción anterior del jugador: {accionCapituloInicial.historial[indice]['respuestaJugador']}
                                                                 Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
                                                                 Requisitos estrictos:
-                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No incluyas la palabra "Historia:" ni ningún encabezado.
                                                                 No agregues opciones nuevas.
                                                                 No menciones la variable del jugador ni la acción anterior de forma directa.
                                                                 La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
-                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {accionCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {accionCapituloInicial.historial[indice]['nombreJugador']} solo cuando sea natural.
                                                                 Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
                                                                 Este formato es obligatorio. No lo ignores.''',
                                                 'options': {
@@ -399,17 +399,17 @@ def ejecutarHiloAccion():
                 bufferOpciones += data['response']
         
         #Imprime las opciones en pantalla
-        imprimirOpciones(formatear_opciones(bufferOpciones))
+        imprimirOpciones(formatearOpciones(bufferOpciones))
 
         listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
 
         #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
         accionCapituloInicial.historial.append(
             {
-                "nombre_jugador":accionCapituloInicial.historial[indice]['nombre_jugador'],
+                "nombreJugador":accionCapituloInicial.historial[indice]['nombreJugador'],
                 "contenido": contenidoNarrativa,
                 "opciones":listaOpciones,
-                "respuesta_jugador":"",
+                "respuestaJugador":"",
             }
         )
         indice += 1       
@@ -418,8 +418,8 @@ def ejecutarHiloTerror():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(terrorCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    estado_juego = (0, True)  # (indice, continuar)
-    indice, continuar = estado_juego
+    estadoJuego = (0, True)  # (indice, continuar)
+    indice, continuar = estadoJuego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in terrorCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -429,12 +429,12 @@ def ejecutarHiloTerror():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
-                guardar_historial_json("historial_terror.json", terrorCapituloInicial.historial)
+                guardarHistorialJson("historial_terror.json", terrorCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"{MENSAJES_ERROR[0]}\n")
+            print(f"{mensajesError[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -443,7 +443,7 @@ def ejecutarHiloTerror():
                 sys.exit()
             
         
-        terrorCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        terrorCapituloInicial.historial[indice].update({'respuestaJugador':respuestaJugador})
         #Interacción inicial con la ia para que entienda el contexto
         responseNarrativa = requests.post(
                                             'http://localhost:11434/api/generate',
@@ -451,14 +451,14 @@ def ejecutarHiloTerror():
                                                 'model': 'phi3:mini',
                                                 'prompt': f'''  Contexto: {terrorCapituloInicial.historial[indice]['contenido']}
                                                                 Acciones válidas: {terrorCapituloInicial.historial[indice]['opciones']}
-                                                                Acción anterior del jugador: {terrorCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Acción anterior del jugador: {terrorCapituloInicial.historial[indice]['respuestaJugador']}
                                                                 Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
                                                                 Requisitos estrictos:
-                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No incluyas la palabra "Historia:" ni ningún encabezado.
                                                                 No agregues opciones nuevas.
                                                                 No menciones la variable del jugador ni la acción anterior de forma directa.
                                                                 La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
-                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {terrorCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {terrorCapituloInicial.historial[indice]['nombreJugador']} solo cuando sea natural.
                                                                 Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
                                                                 Este formato es obligatorio. No lo ignores.''',
                                                 'options': {
@@ -508,17 +508,17 @@ def ejecutarHiloTerror():
                 bufferOpciones += data['response']
         
         #Imprime las opciones en pantalla
-        imprimirOpciones(formatear_opciones(bufferOpciones))
+        imprimirOpciones(formatearOpciones(bufferOpciones))
 
         listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
 
         #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
         terrorCapituloInicial.historial.append(
             {
-                "nombre_jugador":terrorCapituloInicial.historial[indice]['nombre_jugador'],
+                "nombreJugador":terrorCapituloInicial.historial[indice]['nombreJugador'],
                 "contenido": contenidoNarrativa,
                 "opciones":listaOpciones,
-                "respuesta_jugador":"",
+                "respuestaJugador":"",
             }
         )
         indice += 1       
@@ -527,8 +527,8 @@ def ejecutarHiloDrama():
     bordes = anchoLargoTerminal('bordes')
     imprimirParrafo(dramaCapituloInicial.historial[0]["contenido"])
     patron = r'^[A-Za-z]$'
-    estado_juego = (0, True)  # (indice, continuar)
-    indice, continuar = estado_juego
+    estadoJuego = (0, True)  # (indice, continuar)
+    indice, continuar = estadoJuego
     while continuar:
         opcionesValidas = [opcion.split('-')[0].strip().upper() for opcion in dramaCapituloInicial.historial[indice]["opciones"]]
         respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
@@ -538,12 +538,12 @@ def ejecutarHiloDrama():
         if indice > 0:
             if respuestaJugador == "SALIR":
                 print(" " * (bordes//4) + "Gracias por jugar. ¡Hasta la próxima!.\n")
-                guardar_historial_json("historial_drama.json", dramaCapituloInicial.historial)
+                guardarHistorialJson("historial_drama.json", dramaCapituloInicial.historial)
                 break
 
         while (not re.match(patron, respuestaJugador)) or respuestaJugador not in opcionesValidas: 
         #while  respuestaJugador not in opcionesValidas: 
-            print(f"{MENSAJES_ERROR[0]}\n")
+            print(f"{mensajesError[0]}\n")
             respuestaJugador = (input(" " * (bordes//4) + "Ingrese respuesta o 'SALIR' para terminar:\t")).upper()
             print("\n")
             if respuestaJugador == "SALIR":
@@ -552,7 +552,7 @@ def ejecutarHiloDrama():
                 sys.exit()
             
         
-        dramaCapituloInicial.historial[indice].update({'respuesta_jugador':respuestaJugador})
+        dramaCapituloInicial.historial[indice].update({'respuestaJugador':respuestaJugador})
         #Interacción inicial con la ia para que entienda el contexto
         responseNarrativa = requests.post(
                                             'http://localhost:11434/api/generate',
@@ -560,14 +560,14 @@ def ejecutarHiloDrama():
                                                 'model': 'phi3:mini',
                                                 'prompt': f'''  Contexto: {dramaCapituloInicial.historial[indice]['contenido']}
                                                                 Acciones válidas: {dramaCapituloInicial.historial[indice]['opciones']}
-                                                                Acción anterior del jugador: {dramaCapituloInicial.historial[indice]['respuesta_jugador']}
+                                                                Acción anterior del jugador: {dramaCapituloInicial.historial[indice]['respuestaJugador']}
                                                                 Escribe la continuidad de la historia desde ese punto, tomando en cuenta la acción del jugador, pero sin repetirla ni mencionarla explícitamente.
                                                                 Requisitos estrictos:
-                                                                No incluyas la palabra “Historia:” ni ningún encabezado.
+                                                                No incluyas la palabra "Historia:" ni ningún encabezado.
                                                                 No agregues opciones nuevas.
                                                                 No menciones la variable del jugador ni la acción anterior de forma directa.
                                                                 La narración debe tener entre 3 y 5 oraciones, nunca más de 5.
-                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {dramaCapituloInicial.historial[indice]['nombre_jugador']} solo cuando sea natural.
+                                                                El tono debe ser narrativo, coherente y en tercera persona, utilizando el nombre del jugador {dramaCapituloInicial.historial[indice]['nombreJugador']} solo cuando sea natural.
                                                                 Devuelve solo el texto narrativo, sin explicaciones ni formato adicional.
                                                                 Este formato es obligatorio. No lo ignores.''',
                                                 'options': {
@@ -617,42 +617,42 @@ def ejecutarHiloDrama():
                 bufferOpciones += data['response']
         
         #Imprime las opciones en pantalla
-        imprimirOpciones(formatear_opciones(bufferOpciones))
+        imprimirOpciones(formatearOpciones(bufferOpciones))
 
         listaOpciones = [opcion for opcion in (bufferOpciones).split('\n')]
 
         #Actualiza diccionario para almacenar los datos ya obtenidos hasta el momento
         dramaCapituloInicial.historial.append(
             {
-                "nombre_jugador":dramaCapituloInicial.historial[indice]['nombre_jugador'],
+                "nombreJugador":dramaCapituloInicial.historial[indice]['nombreJugador'],
                 "contenido": contenidoNarrativa,
                 "opciones":listaOpciones,
-                "respuesta_jugador":"",
+                "respuestaJugador":"",
             }
         )
         indice += 1       
 
-def ejecutar_accion_por_opcion(nombreJugador):
+def ejecutarAccionPorOpcion(nombreJugador):
     bordes = anchoLargoTerminal('bordes')
-    opcion_input = input(" " * (bordes//4) + "Selecciona una opción:\t")
+    opcionInput = input(" " * (bordes//4) + "Selecciona una opción:\t")
     print("\n")
 
-    while opcion_input not in OPCIONES_MENU:
-        opcion_input = input(" " * (bordes//4) +"Selecciona una opción:\t")
+    while opcionInput not in opcionesMenu:
+        opcionInput = input(" " * (bordes//4) +"Selecciona una opción:\t")
         print("\n")
     
-    match opcion_input:
+    match opcionInput:
         case '1':
-            humorCapituloInicial.historial[0].update({'nombre_jugador':nombreJugador})
+            humorCapituloInicial.historial[0].update({'nombreJugador':nombreJugador})
             ejecutarHiloHumor()
         case '2':
-            accionCapituloInicial.historial[0].update({'nombre_jugador':nombreJugador})
+            accionCapituloInicial.historial[0].update({'nombreJugador':nombreJugador})
             ejecutarHiloAccion()
         case '3':
-            dramaCapituloInicial.historial[0].update({'nombre_jugador':nombreJugador})
+            dramaCapituloInicial.historial[0].update({'nombreJugador':nombreJugador})
             ejecutarHiloDrama()
         case '4':
-            terrorCapituloInicial.historial[0].update({'nombre_jugador':nombreJugador})
+            terrorCapituloInicial.historial[0].update({'nombreJugador':nombreJugador})
             ejecutarHiloTerror()
         case '_':
             print("Opción no válida. Se ha finalizado el juego.")

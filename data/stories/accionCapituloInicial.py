@@ -2,7 +2,7 @@
 
 historial = [
     {
-            "nombre_jugador":"",
+            "nombreJugador":"",
             "contenido":(
                                "La Tensión del Hilo Rojo.\n"
 
@@ -29,6 +29,6 @@ historial = [
                                "B - Planear con frialdad (Estrategia)."
                         ),
             "opciones":['A - Seguir el impulso ciego (Devastación).','B - Planear con frialdad (Estrategia).'],
-            "respuesta_jugador":""
+            "respuestaJugador":""
     }
 ]
