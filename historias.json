@@ -1,0 +1,167 @@
+{
+  "historias": {
+    "aventura_clasica": {
+      "titulo": "El Talismán del Bosque Oscuro",
+      "inicio": "bosque_oscuro",
+
+      "escenas": {
+        "bosque_oscuro": {
+          "descripcion": "Te despertás en un bosque oscuro. El aire está frío y escuchás pasos en la distancia.",
+          "opciones": {
+            "explorar": "sendero",
+            "quedarse_quieto": "bestia_ataca",
+            "huir": "derrota"
+          }
+        },
+        "sendero": {
+          "descripcion": "Avanzás por un sendero iluminado por la luna. Un lobo aparece gruñendo.",
+          "opciones": {
+            "pelear": "batalla_lobo",
+            "esconderse": "cueva",
+            "retroceder": "bosque_oscuro"
+          }
+        },
+        "cueva": {
+          "descripcion": "Descubrís una cueva silenciosa. En el fondo hay un cofre brillante.",
+          "opciones": {
+            "abrir_cofre": "victoria",
+            "volver": "sendero"
+          }
+        },
+        "bestia_ataca": {
+          "descripcion": "Una bestia enorme sale de entre los árboles y te ataca sin piedad.",
+          "opciones": {
+            "correr": "sendero",
+            "quedarse": "derrota"
+          }
+        }
+      },
+
+      "batallas": {
+        "batalla_lobo": {
+          "descripcion": "El lobo te rodea, listo para atacar.",
+          "vida_jugador": 15,
+          "vida_enemigo": 10,
+          "daño_jugador": [1,5],
+          "daño_enemigo": [1,4],
+          "recompensa": 20,
+          "siguiente": "cueva"
+        }
+      },
+
+      "finales": {
+        "victoria": "Abrís el cofre y encontrás el Talismán Sagrado. ¡Has completado la aventura!",
+        "derrota": "La oscuridad del bosque te consume. Tu aventura termina aquí."
+      }
+    },
+
+    "estacion_espacial": {
+      "titulo": "La Estación Echo-9",
+      "inicio": "laboratorio",
+
+      "escenas": {
+        "laboratorio": {
+          "descripcion": "Te despertás en un laboratorio destruido. Las luces parpadean y se escucha un zumbido metálico.",
+          "opciones": {
+            "investigar": "pasillo",
+            "tomar_herramientas": "obtener_multiherramienta",
+            "salir_corriendo": "derrota"
+          }
+        },
+        "pasillo": {
+          "descripcion": "Un pasillo largo se extiende frente a vos. Un dron de seguridad defectuoso aparece.",
+          "opciones": {
+            "pelear": "batalla_dron",
+            "esconderse": "sala_control",
+            "volver": "laboratorio"
+          }
+        },
+        "sala_control": {
+          "descripcion": "Entrás en la sala de control. La consola principal está dañada pero todavía responde.",
+          "opciones": {
+            "restaurar_energia": "victoria",
+            "volver": "pasillo"
+          }
+        },
+        "obtener_multiherramienta": {
+          "descripcion": "Tomás una multiherramienta del suelo. Podría ser útil más adelante.",
+          "opciones": {
+            "continuar": "pasillo"
+          },
+          "recompensa_inventario": ["multiherramienta"]
+        }
+      },
+
+      "batallas": {
+        "batalla_dron": {
+          "descripcion": "El dron defectuoso chispea y avanza hacia vos de forma errática.",
+          "vida_jugador": 18,
+          "vida_enemigo": 12,
+          "daño_jugador": [2,6],
+          "daño_enemigo": [1,5],
+          "recompensa": 30,
+          "siguiente": "sala_control"
+        }
+      },
+
+      "finales": {
+        "victoria": "Lográs restaurar la energía de la estación y activás la cápsula de escape. ¡Sobreviviste!",
+        "derrota": "La estación colapsa antes de que encuentres la salida. Fin de la misión."
+      }
+    },
+
+    "mazmorra_magica": {
+      "titulo": "La Llave de la Cripta Arcana",
+      "inicio": "celda",
+
+      "escenas": {
+        "celda": {
+          "descripcion": "Despertás en una celda antigua, iluminada por una antorcha tenue. La puerta está entreabierta.",
+          "opciones": {
+            "salir": "pasillo_antiguo",
+            "investigar": "piedra_suelta",
+            "gritar": "derrota"
+          }
+        },
+        "piedra_suelta": {
+          "descripcion": "Retirás una piedra suelta y encontrás una pequeña llave rústica.",
+          "opciones": {
+            "tomar_llave": "pasillo_antiguo"
+          },
+          "recompensa_inventario": ["llave_rustica"]
+        },
+        "pasillo_antiguo": {
+          "descripcion": "Avanzás por un pasillo silencioso. Un guardián espectral aparece materializándose.",
+          "opciones": {
+            "enfrentar_guardian": "batalla_guardian",
+            "huir": "celda"
+          }
+        },
+        "camara_final": {
+          "descripcion": "Llegás a una cámara mágica donde descansa un cofre con inscripciones brillantes.",
+          "opciones": {
+            "usar_llave": "victoria",
+            "tocar_cofre": "derrota"
+          }
+        }
+      },
+
+      "batallas": {
+        "batalla_guardian": {
+          "descripcion": "El guardián espectral levita y concentra energía mágica.",
+          "vida_jugador": 20,
+          "vida_enemigo": 15,
+          "daño_jugador": [1,7],
+          "daño_enemigo": [2,6],
+          "recompensa": 40,
+          "siguiente": "camara_final"
+        }
+      },
+
+      "finales": {
+        "victoria": "La llave encaja perfectamente y el cofre revela un antiguo artefacto. ¡Escapás de la cripta!",
+        "derrota": "La magia de la mazmorra te consume. Tu alma queda atrapada para siempre."
+      }
+    }
+  }
+}
