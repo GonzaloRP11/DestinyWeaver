@@ -1,0 +1,155 @@
+{
+  "historias": {
+    "aventura_clasica": {
+      "titulo": "El Talismán del Bosque Oscuro",
+      "inicio": "bosque",
+
+      "escenas": {
+        "bosque": {
+          "descripcion": "Te encontrás en un bosque oscuro. Podés explorar un sendero o entrar a una cueva.",
+          "opciones": {
+            "sendero": "sendero",
+            "cueva": "cueva"
+          }
+        },
+
+        "sendero": {
+          "descripcion": "Un lobo aparece bloqueando el paso.",
+          "opciones": {
+            "pelear": "batalla_lobo"
+          }
+        },
+
+        "cueva": {
+          "descripcion": "Entrás a la cueva y ves un cofre brillante.",
+          "opciones": {
+            "abrir": "victoria"
+          },
+          "recompensa_inventario": ["talisman"]
+        }
+      },
+
+      "batallas": {
+        "batalla_lobo": {
+          "descripcion": "El lobo ruge y se prepara para atacarte.",
+          "vida_jugador": 10,
+          "vida_enemigo": 6,
+          "daño_jugador": [1, 4],
+          "daño_enemigo": [1, 3],
+          "recompensa": 20,
+          "siguiente": "cueva"
+        }
+      },
+
+      "recompensa_victoria": 50,
+
+      "finales": {
+        "victoria": "¡Encontraste el Talismán Sagrado dentro del cofre!",
+        "derrota": "El lobo te derrota y la oscuridad del bosque te envuelve."
+      }
+    },
+
+    "estacion_espacial": {
+      "titulo": "La Estación Echo-9",
+      "inicio": "laboratorio",
+
+      "escenas": {
+        "laboratorio": {
+          "descripcion": "Despertás en un laboratorio destruido. Podés ir al pasillo o revisar una sala.",
+          "opciones": {
+            "pasillo": "pasillo",
+            "sala": "sala"
+          }
+        },
+
+        "pasillo": {
+          "descripcion": "Un dron defectuoso aparece frente a vos.",
+          "opciones": {
+            "pelear": "batalla_dron"
+          }
+        },
+
+        "sala": {
+          "descripcion": "Encontrás una consola de energía que controla la cápsula de escape.",
+          "opciones": {
+            "activar": "victoria"
+          },
+          "recompensa_inventario": ["chip_de_energia"]
+        }
+      },
+
+      "batallas": {
+        "batalla_dron": {
+          "descripcion": "El dron avanza con movimientos erráticos.",
+          "vida_jugador": 12,
+          "vida_enemigo": 8,
+          "daño_jugador": [1, 5],
+          "daño_enemigo": [1, 4],
+          "recompensa": 30,
+          "siguiente": "sala"
+        }
+      },
+
+      "recompensa_victoria": 50,
+
+      "finales": {
+        "victoria": "Restaurás la energía y accedés a la cápsula de escape.",
+        "derrota": "El dron te destruye antes de que puedas huir."
+      }
+    },
+
+    "mazmorra_magica": {
+      "titulo": "La Cripta Arcana",
+      "inicio": "celda",
+
+      "escenas": {
+        "celda": {
+          "descripcion": "Despertás en una celda. Podés tomar el pasillo o revisar una pared sospechosa.",
+          "opciones": {
+            "pasillo": "pasillo",
+            "pared": "pared"
+          }
+        },
+
+        "pasillo": {
+          "descripcion": "Un guardián espectral aparece.",
+          "opciones": {
+            "pelear": "batalla_guardian"
+          }
+        },
+
+        "pared": {
+          "descripcion": "Encontrás una llave detrás de una piedra suelta.",
+          "opciones": {
+            "tomar_llave": "camara"
+          },
+          "recompensa_inventario": ["llave"]
+        },
+
+        "camara": {
+          "descripcion": "Una cámara final con un cofre mágico.",
+          "opciones": {
+            "abrir": "victoria"
+          }
+        }
+      },
+
+      "batallas": {
+        "batalla_guardian": {
+          "descripcion": "El guardián espectral concentra energía oscura.",
+          "vida_jugador": 12,
+          "vida_enemigo": 9,
+          "daño_jugador": [1, 6],
+          "daño_enemigo": [1, 4],
+          "recompensa": 40,
+          "siguiente": "camara"
+        }
+      },
+      "recompensa_victoria": 50,
+      "finales": {
+        "victoria": "Usás la llave y obtenés un artefacto sagrado.",
+        "derrota": "El guardián te derrota y quedás atrapado en la cripta."
+      }
+    }
+  }
+}
