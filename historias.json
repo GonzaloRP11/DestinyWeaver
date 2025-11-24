@@ -6,10 +6,11 @@
 
       "escenas": {
         "bosque": {
-          "descripcion": "Te encontrás en un bosque oscuro. Podés explorar un sendero o entrar a una cueva.",
+          "descripcion": "Te encontrás en un bosque oscuro. Podés explorar un sendero, entrar a una cueva o avanzar entre los árboles.",
           "opciones": {
             "sendero": "sendero",
-            "cueva": "cueva"
+            "cueva": "cueva",
+            "entre_arboles": "derrota"
           }
         },
 
@@ -45,7 +46,7 @@
 
       "finales": {
         "victoria": "¡Encontraste el Talismán Sagrado dentro del cofre!",
-        "derrota": "El lobo te derrota y la oscuridad del bosque te envuelve."
+        "derrota": "Te adentrás entre los árboles y algo te ataca furtivamente."
       }
     },
 
@@ -55,10 +56,11 @@
 
       "escenas": {
         "laboratorio": {
-          "descripcion": "Despertás en un laboratorio destruido. Podés ir al pasillo o revisar una sala.",
+          "descripcion": "Despertás en un laboratorio destruido. Podés ir al pasillo, revisar una sala o abrir una puerta dañada.",
           "opciones": {
             "pasillo": "pasillo",
-            "sala": "sala"
+            "sala": "sala",
+            "puerta_dañada": "derrota"
           }
         },
 
@@ -94,7 +96,7 @@
 
       "finales": {
         "victoria": "Restaurás la energía y accedés a la cápsula de escape.",
-        "derrota": "El dron te destruye antes de que puedas huir."
+        "derrota": "La puerta colapsa y te deja atrapado entre escombros."
       }
     },
 
@@ -104,10 +106,11 @@
 
       "escenas": {
         "celda": {
-          "descripcion": "Despertás en una celda. Podés tomar el pasillo o revisar una pared sospechosa.",
+          "descripcion": "Despertás en una celda. Podés tomar el pasillo, revisar una pared o empujar una puerta inestable.",
           "opciones": {
             "pasillo": "pasillo",
-            "pared": "pared"
+            "pared": "pared",
+            "puerta_inestable": "derrota"
           }
         },
 
@@ -145,10 +148,12 @@
           "siguiente": "camara"
         }
       },
+
       "recompensa_victoria": 50,
+
       "finales": {
         "victoria": "Usás la llave y obtenés un artefacto sagrado.",
-        "derrota": "El guardián te derrota y quedás atrapado en la cripta."
+        "derrota": "Empujás la puerta inestable y caés en un pozo oscuro."
       }
     }
   }
