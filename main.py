@@ -4,13 +4,15 @@ import re
 import random
 
 def cargarDatos(archivoHistoria):
+    """Carga el archivo historias.json"""
     try:
         with open(archivoHistoria, "r", encoding="utf-8") as fHistorias:
             return json.load(fHistorias)
-    except (FileNotFoundError,FileExistsError) as error:
+    except (FileNotFoundError) as error:
         print("Error:\t",error)
 
 def elegirHistoria(datos):
+    """Impresión de historias y elección del usuario"""
     historias = datos["historias"]
 
     print("=== HISTORIAS DISPONIBLES ===")
@@ -24,10 +26,15 @@ def elegirHistoria(datos):
     while eleccion not in historias:
         print("Historia inválida, intentá otra vez.")
         eleccion = str(input("Elegí una historia y escribí su descripción: ").strip().lower())
+    
+    #Mostrar mapa de la aventura que se jugará
+    mostrarMapa(eleccion)
+
     return historias[eleccion]
 
 
 def obtenerNombre():
+    """Obtener nombre de jugador"""
     patron = '^[a-zA-Z]{3,15}$'
     nombre = str(input("Ingresa tu nombre (solo letras y una longitud mínimo 3 máximo 15):\t"))
     while re.search(patron,nombre) == None:
@@ -35,13 +42,15 @@ def obtenerNombre():
     return nombre
 
 def jugarHistoria(historia,nombre):
+    """Inicio del juego"""
     inicia = (20,0)
     vida,puntos = inicia
 
     estado = {
         "vida": vida,
         "puntos": puntos,
-        "inventario": []
+        "inventario": [],
+        "escenas_visitadas":set()
     }
 
     actual = historia["inicio"]
@@ -50,8 +59,9 @@ def jugarHistoria(historia,nombre):
 
     while jugando:
 
-        # Verifico estado del juego
+        # Verifico si es final victoria o derrota
         if actual == "victoria":
+            estado["puntos"] += historia.get("recompensa_victoria")
             print(f"¡VICTORIA {nombre}!")
             print(historia["finales"]["victoria"])
             print(f"Puntos totales: {estado['puntos']}")
@@ -62,11 +72,11 @@ def jugarHistoria(historia,nombre):
             print(f"Puntos alcanzados: {estado['puntos']}")
             jugando = False
         else:
-            # ¿Es escena?
+            # procesa escena
             if actual in historia["escenas"]:
-                actual = ejecutar_escena(actual, historia, estado)
+                actual = ejecutarEscena(actual, historia, estado)
 
-            # ¿Es batalla?
+            # procesa batalla
             elif actual in historia["batallas"]:
                 actual = ejecutar_batalla(actual, historia, estado)
 
@@ -74,8 +84,10 @@ def jugarHistoria(historia,nombre):
                 print("Error: estado desconocido", actual)
                 return
             
-def ejecutar_escena(nombreEscena, historia, estado):
+def ejecutarEscena(nombreEscena, historia, estado):
+
     escena = historia["escenas"][nombreEscena]
+    estado["escenas_visitadas"].add(nombreEscena)
 
     print("---------------------------------")
     print(escena["descripcion"])
@@ -101,6 +113,7 @@ def ejecutar_escena(nombreEscena, historia, estado):
 
 
 def ejecutar_batalla(nombre_batalla, historia, estado):
+    """Ejecución de batalla"""
     batalla = historia["batallas"][nombre_batalla]
 
     print("=== ¡COMIENZA LA BATALLA! ===")
@@ -128,11 +141,37 @@ def ejecutar_batalla(nombre_batalla, historia, estado):
         if vidaJugador <= 0:
             return "derrota"
 
-    # Si ganás
+    # Suma de puntos si se gana
     estado["puntos"] += batalla["recompensa"]
     print(f"Ganaste la batalla. +{batalla['recompensa']} puntos.")
 
     return batalla["siguiente"]
+
+
+
+def mostrarMapa(nombreHistoria):
+    mapas = {
+                "aventura_clasica": [
+                    ["bosque", "sendero"],
+                    ["cueva"]
+                ],
+                "estacion_espacial": [
+                    ["laboratorio", "pasillo"],
+                    ["sala"]
+                ],
+                "mazmorra_magica": [
+                    ["celda", "pasillo"],
+                    ["pared", "camara"]
+                ]
+            }
+    
+    print("\n=== MAPA DE LA AVENTURA ===")
+    matriz = mapas.get(f"{nombreHistoria}")
+
+    # Recorremos la matriz (lista de listas)
+    for fila in matriz:
+        print(" | ".join(fila))
+    print("===========================\n")
 
 def  mensajeComienzoJuego():
     print("=== COMIENZO DE JUEGO ===")
@@ -141,14 +180,20 @@ def  mensajeComienzoJuego():
     print("- Si la escena tiene batalla, seguí los pasos.",end="\n")
     print("- Podés ganar o perder según tus decisiones.",end="\n")
     print("Elegí una aventura para comenzar.",end="\n")
+    print("==========================",end="\n")
 
 
 def main():
     archivoHistoria = os.path.join(os.path.dirname(__file__),"historias.json")
+    #Mensaje comienzo de juego
     mensajeComienzoJuego()
+    #Cargar historias del archivo json
     datos = cargarDatos(archivoHistoria)
+    #Obtener nombre del jugador
     nombreJugador = obtenerNombre()
+    #Elegir historia a jugar y mostrar mapa
     historia = elegirHistoria(datos)
+    #Ejecutar historia
     jugarHistoria(historia,nombreJugador)
 
 main()
