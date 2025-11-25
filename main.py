@@ -27,7 +27,6 @@ def elegirHistoria(datos):
         print("Historia inválida, intentá otra vez.")
         eleccion = str(input("Elegí una historia y escribí su descripción: ").strip().lower())
     
-    #Mostrar mapa de la aventura que se jugará
     mostrarMapa(eleccion)
 
     return historias[eleccion]
@@ -47,14 +46,15 @@ def obtenerNombre():
 
 def jugarHistoria(historia,nombre):
     """Inicio del juego"""
-    inicia = (20,0)
+    inicia = (10,0)
     vida,puntos = inicia
 
     estado = {
         "vida": vida,
         "puntos": puntos,
         "inventario": [],
-        "escenas_visitadas":set()
+        "escenas_visitadas":set(),
+        "logros": []
     }
 
     actual = historia["inicio"]
@@ -63,9 +63,8 @@ def jugarHistoria(historia,nombre):
 
     while jugando:
 
-        # Verifico si es final victoria o derrota
         if actual == "victoria":
-            estado["puntos"] += historia.get("recompensa_victoria")
+            estado["puntos"] += historia.get("recompensa_victoria", 0)
             print(f"¡VICTORIA {nombre}!")
             print(historia["finales"]["victoria"])
             print(f"Puntos totales: {estado['puntos']}")
@@ -80,11 +79,9 @@ def jugarHistoria(historia,nombre):
             cantidad_escenas = contarRecursivo(list(estado["escenas_visitadas"]))
             print(f"Escenas visitadas: {cantidad_escenas}")
         else:
-            # procesa escena
             if actual in historia["escenas"]:
                 actual = ejecutarEscena(actual, historia, estado)
 
-            # procesa batalla
             elif actual in historia["batallas"]:
                 actual = ejecutar_batalla(actual, historia, estado)
 
@@ -93,30 +90,42 @@ def jugarHistoria(historia,nombre):
                 return
             
 def ejecutarEscena(nombreEscena, historia, estado):
-
     escena = historia["escenas"][nombreEscena]
     estado["escenas_visitadas"].add(nombreEscena)
 
     print("---------------------------------")
     print(escena["descripcion"])
     print("---------------------------------")
-
-    # Mostrar opciones
+        
     for opciones in escena["opciones"]:
         print(f"- {opciones}")
 
     eleccion = input("¿Qué hacés?: ").strip().lower()
 
     while eleccion not in escena["opciones"]:
-        eleccion = input("¿Qué hacés?: ").strip().lower()
+        eleccion = input("Opción inválida. ¿Qué hacés?: ").strip().lower()
     
     siguiente = escena["opciones"][eleccion]
 
-    if "recompensa_inventario" in escena:
-        for item in escena["recompensa_inventario"]:
-            estado["inventario"].append(item)
-            print(f"Obtenés: {item}")
+    if eleccion == "abrir":
+        if "recompensa_inventario" in escena:
+            for item in escena["recompensa_inventario"]:
+                estado["inventario"].append(item)
+                print(f"Obtenés: {item}")
+        
+        print(f"Verificando poción. Vida actual: {estado['vida']}.")
+        
+        if "pocion_de_salud" in estado["inventario"]:
+            usar_pocion = input("¿Quieres usar una poción de salud? (si/no): ").strip().lower()
+            if usar_pocion == "si":
+                estado["vida"] = 10
+                estado["inventario"].remove("pocion_de_salud")
+                print("Usaste una poción de salud. Vida restaurada al máximo.")
+            else:
+                print("No usaste la poción de salud.")
 
+    print(f"Vida: {estado['vida']} | Puntos: {estado['puntos']} | Inventario: {estado['inventario']}") 
+    
     return siguiente
 
 
@@ -127,31 +136,35 @@ def ejecutar_batalla(nombre_batalla, historia, estado):
     print("=== ¡COMIENZA LA BATALLA! ===")
     print(batalla["descripcion"])
 
-    vidaJugador = batalla["vida_jugador"]
+    vidaMaximaJugador = 10  
+    estado["vida"] = vidaMaximaJugador  
     vidaEnemigo = batalla["vida_enemigo"]
 
     daño = lambda minimo, maximo: random.randint(minimo, maximo)
     dañoMinJugador,dañoMaxJugador = batalla["daño_jugador"]
     dañoMinEnemigo,dañoMaxEnemigo = batalla["daño_enemigo"]
 
-    while vidaJugador > 0 and vidaEnemigo > 0:
+    while estado["vida"] > 0 and vidaEnemigo > 0:
         input("Presioná ENTER para atacar...")
-
         dañoJugador = daño(dañoMinJugador,dañoMaxJugador)
         dañoEnemigo = daño(dañoMinEnemigo,dañoMaxEnemigo)
 
         vidaEnemigo -= dañoJugador
-        vidaJugador -= dañoEnemigo
+        estado["vida"] -= dañoEnemigo
 
         print(f"Pegás {dañoJugador} | El enemigo te pega {dañoEnemigo}")
-        print(f"Tu vida: {vidaJugador} | Vida enemigo: {dañoEnemigo}")
+        print(f"Tu vida: {estado['vida']} | Vida enemigo: {vidaEnemigo}")
 
-        if vidaJugador <= 0:
+        if estado["vida"] <= 0:
+            print("Has sido derrotado.")
             return "derrota"
 
-    # Suma de puntos si se gana
-    estado["puntos"] += batalla["recompensa"]
-    print(f"Ganaste la batalla. +{batalla['recompensa']} puntos.")
+    if vidaEnemigo <= 0:
+        estado["puntos"] += batalla["recompensa"]
+        print(f"Ganaste la batalla. +{batalla['recompensa']} puntos.")
+        if "Ganador de Batallas" not in estado["logros"]:
+            estado["logros"].append("Ganador de Batallas")
+            print("¡Logro desbloqueado: Ganador de Batallas!")
 
     return batalla["siguiente"]
 
@@ -200,15 +213,10 @@ def  mensajeComienzoJuego():
 
 def main():
     archivoHistoria = os.path.join(os.path.dirname(__file__),"historias.json")
-    #Mensaje comienzo de juego
     mensajeComienzoJuego()
-    #Cargar historias del archivo json
     datos = cargarDatos(archivoHistoria)
-    #Obtener nombre del jugador
     nombreJugador = obtenerNombre()
-    #Elegir historia a jugar y mostrar mapa
     historia = elegirHistoria(datos)
-    #Ejecutar historia
     jugarHistoria(historia,nombreJugador)
 
 if __name__ == "__main__":
