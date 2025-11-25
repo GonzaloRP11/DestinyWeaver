@@ -33,11 +33,15 @@ def elegirHistoria(datos):
     return historias[eleccion]
 
 
+def validarNombre(nombre):
+    patron = '^[a-zA-Z]{3,15}$'
+    return re.search(patron, nombre) != None
+
+
 def obtenerNombre():
     """Obtener nombre de jugador"""
-    patron = '^[a-zA-Z]{3,15}$'
     nombre = str(input("Ingresa tu nombre (solo letras y una longitud mínimo 3 máximo 15):\t"))
-    while re.search(patron,nombre) == None:
+    while not validarNombre(nombre):
         nombre = str(input("Ingresa tu nombre (solo letras y una longitud mínimo 3 máximo 15):\t"))
     return nombre
 
@@ -173,6 +177,31 @@ def mostrarMapa(nombreHistoria):
         print(" | ".join(fila))
     print("===========================\n")
 
+def obtenerMapa(nombreHistoria):
+    mapas = {
+        "aventura_clasica": [
+            ["bosque", "sendero"],
+            ["cueva"]
+        ],
+        "estacion_espacial": [
+            ["laboratorio", "pasillo"],
+            ["sala"]
+        ],
+        "mazmorra_magica": [
+            ["celda", "pasillo"],
+            ["pared", "camara"]
+        ]
+    }
+    return mapas.get(nombreHistoria)
+
+def mostrarMapa(nombreHistoria):
+    matriz = obtenerMapa(nombreHistoria)
+    print("\n=== MAPA DE LA AVENTURA ===")
+    for fila in matriz:
+        print(" | ".join(fila))
+    print("===========================\n")
+
+
 def  mensajeComienzoJuego():
     print("=== COMIENZO DE JUEGO ===")
     print("Instrucciones:",end="\n")
@@ -196,4 +225,5 @@ def main():
     #Ejecutar historia
     jugarHistoria(historia,nombreJugador)
 
-main()
+if __name__ == "__main__":
+    main()
