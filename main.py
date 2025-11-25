@@ -27,6 +27,7 @@ def elegirHistoria(datos):
         print("Historia inválida, intentá otra vez.")
         eleccion = str(input("Elegí una historia y escribí su descripción: ").strip().lower())
     
+    #Mostrar mapa de la aventura que se jugará
     mostrarMapa(eleccion)
 
     return historias[eleccion]
@@ -63,6 +64,7 @@ def jugarHistoria(historia,nombre):
 
     while jugando:
 
+        # Verifico si es final victoria o derrota
         if actual == "victoria":
             estado["puntos"] += historia.get("recompensa_victoria", 0)
             print(f"¡VICTORIA {nombre}!")
@@ -79,9 +81,11 @@ def jugarHistoria(historia,nombre):
             cantidad_escenas = contarRecursivo(list(estado["escenas_visitadas"]))
             print(f"Escenas visitadas: {cantidad_escenas}")
         else:
+            # procesa escena
             if actual in historia["escenas"]:
                 actual = ejecutarEscena(actual, historia, estado)
 
+            # procesa batalla
             elif actual in historia["batallas"]:
                 actual = ejecutar_batalla(actual, historia, estado)
 
@@ -97,6 +101,7 @@ def ejecutarEscena(nombreEscena, historia, estado):
     print(escena["descripcion"])
     print("---------------------------------")
         
+    # Mostrar opciones
     for opciones in escena["opciones"]:
         print(f"- {opciones}")
 
@@ -213,10 +218,15 @@ def  mensajeComienzoJuego():
 
 def main():
     archivoHistoria = os.path.join(os.path.dirname(__file__),"historias.json")
+    # Suma de puntos si se gana
     mensajeComienzoJuego()
+    #Cargar historias del archivo json
     datos = cargarDatos(archivoHistoria)
+    #Obtener nombre del jugador
     nombreJugador = obtenerNombre()
+    #Elegir historia a jugar y mostrar mapa
     historia = elegirHistoria(datos)
+    #Ejecutar historia
     jugarHistoria(historia,nombreJugador)
 
 if __name__ == "__main__":
