@@ -70,11 +70,15 @@ def jugarHistoria(historia,nombre):
             print(historia["finales"]["victoria"])
             print(f"Puntos totales: {estado['puntos']}")
             jugando = False
+            cantidad_escenas = contarRecursivo(list(estado["escenas_visitadas"]))
+            print(f"Escenas visitadas: {cantidad_escenas}")
         elif actual == "derrota":
             print(f"DERROTA {nombre}")
             print(historia["finales"]["derrota"])
             print(f"Puntos alcanzados: {estado['puntos']}")
             jugando = False
+            cantidad_escenas = contarRecursivo(list(estado["escenas_visitadas"]))
+            print(f"Escenas visitadas: {cantidad_escenas}")
         else:
             # procesa escena
             if actual in historia["escenas"]:
@@ -175,6 +179,13 @@ def mostrarMapa(nombreHistoria):
     for fila in matriz:
         print(" | ".join(fila))
     print("===========================\n")
+
+
+def contarRecursivo(lista):
+    """Cuenta elementos de una lista usando recursividad."""
+    if len(lista) == 0:
+        return 0
+    return 1 + contarRecursivo(lista[1:])
 
 
 def  mensajeComienzoJuego():
