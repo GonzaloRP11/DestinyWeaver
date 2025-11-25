@@ -26,7 +26,7 @@
           "opciones": {
             "abrir": "victoria"
           },
-          "recompensa_inventario": ["talisman"]
+          "recompensa_inventario": ["talisman", "pocion_de_salud"]
         }
       },
 
@@ -63,6 +63,7 @@
             "puerta_dañada": "derrota"
           }
         },
+        
 
         "pasillo": {
           "descripcion": "Un dron defectuoso aparece frente a vos.",
