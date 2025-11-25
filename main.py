@@ -152,31 +152,6 @@ def ejecutar_batalla(nombre_batalla, historia, estado):
     return batalla["siguiente"]
 
 
-
-def mostrarMapa(nombreHistoria):
-    mapas = {
-                "aventura_clasica": [
-                    ["bosque", "sendero"],
-                    ["cueva"]
-                ],
-                "estacion_espacial": [
-                    ["laboratorio", "pasillo"],
-                    ["sala"]
-                ],
-                "mazmorra_magica": [
-                    ["celda", "pasillo"],
-                    ["pared", "camara"]
-                ]
-            }
-    
-    print("\n=== MAPA DE LA AVENTURA ===")
-    matriz = mapas.get(f"{nombreHistoria}")
-
-    # Recorremos la matriz (lista de listas)
-    for fila in matriz:
-        print(" | ".join(fila))
-    print("===========================\n")
-
 def obtenerMapa(nombreHistoria):
     mapas = {
         "aventura_clasica": [
